@@ -16,7 +16,7 @@
 
 ## Automated Findings / Publicly Known Issues
 
-The 4naly3er report can be found [here](https://github.com/code-423n4/2023-11-panoptic/blob/main/4naly3er-report.md).
+The 4naly3er report can be found [here](https://gist.github.com/JustDravee/0c80bf61962549e5b9ebd8b56e783155).
 
 Automated findings output for the audit can be found [here](https://github.com/code-423n4/2023-11-panoptic/blob/main/bot-report.md) within 24 hours of audit opening.
 
@@ -48,19 +48,19 @@ This contract is a component of the Panoptic V1 protocol, but also serves as a s
 
 | Contract | SLOC | Purpose | Libraries used |
 | ----------- | ----------- | ----------- | ----------- |
-| [contracts/SemiFungiblePositionManager.sol](https://github.com/code-423n4/2023-11-panoptic/blob/contracts/SemiFungiblePositionManager.sol) | 757 | The 'engine' of Panoptic - manages all Uniswap V3 positions in the protocol as well as being a more advanced, gas-efficient alternative to NFPM for Uniswap LPs | |
-| [contracts/tokens/ERC1155Minimal.sol](https://github.com/code-423n4/2023-11-panoptic/blob/contracts/tokens/ERC1155Minimal.sol) | 129 | A minimalist implementation of the ERC1155 token standard without metadata | [`@openzeppelin/*`](https://openzeppelin.com/contracts/) |
-| [contracts/types/LeftRight.sol](https://github.com/code-423n4/2023-11-panoptic/blob/contracts/types/LeftRight.sol) | 91 | Implementation for a set of custom data types that can hold two 128-bit numbers | |
-| [contracts/types/LiquidityChunk.sol](https://github.com/code-423n4/2023-11-panoptic/blob/contracts/types/LiquidityChunk.sol) | 45 | Implementation for a custom data type that can represent a liquidity chunk of a given size in Uniswap - containing a tickLower, tickUpper, and liquidity | |
-| [contracts/types/TokenId.sol](https://github.com/code-423n4/2023-11-panoptic/blob/contracts/types/TokenId.sol) | 290 | Implementation for the custom data type used in the SFPM and Panoptic to encode position data in 256-bit ERC1155 tokenIds - holds a pool identifier and up to four full position legs | |
-| [contracts/libraries/CallbackLib.sol](https://github.com/code-423n4/2023-11-panoptic/blob/contracts/libraries/CallbackLib.sol) | 36 | Library for verifying and decoding Uniswap callbacks | |
-| [contracts/libraries/Constants.sol](https://github.com/code-423n4/2023-11-panoptic/blob/contracts/libraries/Constants.sol) | 13 | Library of Constants used in Panoptic | |
-| [contracts/libraries/Errors.sol](https://github.com/code-423n4/2023-11-panoptic/blob/contracts/libraries/Errors.sol) | 19 | Contains all custom errors used in Panoptic's core contracts | |
-| [contracts/libraries/FeesCalc.sol](https://github.com/code-423n4/2023-11-panoptic/blob/contracts/libraries/FeesCalc.sol) | 52 | Utility to calculate up-to-date swap fees for liquidity chunks | |
-| [contracts/libraries/Math.sol](https://github.com/code-423n4/2023-11-panoptic/blob/contracts/libraries/Math.sol) | 266 | Library of generic math functions like abs(), mulDiv, etc | |
-| [contracts/libraries/PanopticMath.sol](https://github.com/code-423n4/2023-11-panoptic/blob/contracts/libraries/PanopticMath.sol) | 82 | Library containing advanced Panoptic/Uniswap-specific functionality such as our TWAP, price conversions, and position sizing math | |
-| [contracts/libraries/SafeTransferLib.sol](https://github.com/code-423n4/2023-11-panoptic/blob/contracts/libraries/SafeTransferLib.sol) | 19 | Safe ERC20 transfer library that gracefully handles missing return values | |
-| [contracts/multicall/Multicall.sol](https://github.com/code-423n4/2023-11-panoptic/blob/contracts/multicall/Multicall.sol) | 18 | Adds a function to inheriting contracts that allows for multiple calls to be executed in a single transaction | |
+| [contracts/SemiFungiblePositionManager.sol](https://github.com/code-423n4/2023-11-panoptic/blob/main/contracts/SemiFungiblePositionManager.sol) | 757 | The 'engine' of Panoptic - manages all Uniswap V3 positions in the protocol as well as being a more advanced, gas-efficient alternative to NFPM for Uniswap LPs | |
+| [contracts/tokens/ERC1155Minimal.sol](https://github.com/code-423n4/2023-11-panoptic/blob/main/contracts/tokens/ERC1155Minimal.sol) | 129 | A minimalist implementation of the ERC1155 token standard without metadata | [`@openzeppelin/*`](https://openzeppelin.com/contracts/) |
+| [contracts/types/LeftRight.sol](https://github.com/code-423n4/2023-11-panoptic/blob/main/contracts/types/LeftRight.sol) | 91 | Implementation for a set of custom data types that can hold two 128-bit numbers | |
+| [contracts/types/LiquidityChunk.sol](https://github.com/code-423n4/2023-11-panoptic/blob/main/contracts/types/LiquidityChunk.sol) | 45 | Implementation for a custom data type that can represent a liquidity chunk of a given size in Uniswap - containing a tickLower, tickUpper, and liquidity | |
+| [contracts/types/TokenId.sol](https://github.com/code-423n4/2023-11-panoptic/blob/main/contracts/types/TokenId.sol) | 290 | Implementation for the custom data type used in the SFPM and Panoptic to encode position data in 256-bit ERC1155 tokenIds - holds a pool identifier and up to four full position legs | |
+| [contracts/libraries/CallbackLib.sol](https://github.com/code-423n4/2023-11-panoptic/blob/main/contracts/libraries/CallbackLib.sol) | 36 | Library for verifying and decoding Uniswap callbacks | |
+| [contracts/libraries/Constants.sol](https://github.com/code-423n4/2023-11-panoptic/blob/main/contracts/libraries/Constants.sol) | 13 | Library of Constants used in Panoptic | |
+| [contracts/libraries/Errors.sol](https://github.com/code-423n4/2023-11-panoptic/blob/main/contracts/libraries/Errors.sol) | 19 | Contains all custom errors used in Panoptic's core contracts | |
+| [contracts/libraries/FeesCalc.sol](https://github.com/code-423n4/2023-11-panoptic/blob/main/contracts/libraries/FeesCalc.sol) | 52 | Utility to calculate up-to-date swap fees for liquidity chunks | |
+| [contracts/libraries/Math.sol](https://github.com/code-423n4/2023-11-panoptic/blob/main/contracts/libraries/Math.sol) | 266 | Library of generic math functions like abs(), mulDiv, etc | |
+| [contracts/libraries/PanopticMath.sol](https://github.com/code-423n4/2023-11-panoptic/blob/main/contracts/libraries/PanopticMath.sol) | 82 | Library containing advanced Panoptic/Uniswap-specific functionality such as our TWAP, price conversions, and position sizing math | |
+| [contracts/libraries/SafeTransferLib.sol](https://github.com/code-423n4/2023-11-panoptic/blob/main/contracts/libraries/SafeTransferLib.sol) | 19 | Safe ERC20 transfer library that gracefully handles missing return values | |
+| [contracts/multicall/Multicall.sol](https://github.com/code-423n4/2023-11-panoptic/blob/main/contracts/multicall/Multicall.sol) | 18 | Adds a function to inheriting contracts that allows for multiple calls to be executed in a single transaction | |
 
 ```ml
 contracts/
@@ -70,7 +70,7 @@ contracts/
 ├── types
 │   ├── LeftRight — "Implementation for a set of custom data types that can hold two 128-bit numbers"
 │   ├── LiquidityChunk — "Implementation for a custom data type that can represent a liquidity chunk of a given size in Uniswap - containing a tickLower, tickUpper, and liquidity"
-│   └── TokenId — "Implemenation for the custom data type used in the SFPM and Panoptic to encode position data in 256-bit ERC1155 tokenIds - holds a pool identifier and up to four full position legs"
+│   └── TokenId — "Implementation for the custom data type used in the SFPM and Panoptic to encode position data in 256-bit ERC1155 tokenIds - holds a pool identifier and up to four full position legs"
 ├── libraries
 │   ├── CallbackLib — "Library for verifying and decoding Uniswap callbacks"
 │   ├── Constants — "Library of Constants used in Panoptic"
@@ -87,7 +87,7 @@ All files in the `contracts` directory are in scope.
 
 # Additional Context
 - Any compliant ERC20 token that is part of a Uniswap V3 pool and is not a fee-on-transfer token is supported, including ERC-777 tokens.
-- The SFPM may be deployed to Ethereum, Arbitrum, Polygon, Optimisim, BSC, Base, and Avalanche, and other EVM chains with active Uniswap V3 deployments.
+- The SFPM may be deployed to Ethereum, Arbitrum, Polygon, Optimism, BSC, Base, and Avalanche, and other EVM chains with active Uniswap V3 deployments.
 - EIP Compliance
   - `SemiFungiblePositionManager`: Should comply with `ERC1155`
 
@@ -138,10 +138,7 @@ Gas report:
 forge test --gas-report
 ```
 
-Note that due to the complex and fuzzing-heavy nature of the tests, they may be slow to run on a public RPC. If you have a local mainnet node, 
-you may want to run the tests against that instead. If you want to write your own tests, we recommend using the `--match-test testName` flag to ensure
-only the tests you want to run are executed.
+Note that due to the complex and fuzzing-heavy nature of the tests, they may be slow to run on a public RPC. If you have a local mainnet node, you may want to run the tests against that instead. If you want to write your own tests, we recommend using the `--match-test testName` flag to ensure only the tests you want to run are executed.
 
 ## Slither
-Running slither should produce 156 results. We have reviewed all of these results on our end, and have not found them to be issues. Much of the interesting issues are regarding reentrancy, and we have implemented a per-pool
-reentrancy guard in the SFPM. Please do not submit slither results as findings unless you have *confirmed* there is a specific exploitable issue resulting in negative consequences linked to the result. 
+Running slither should produce 156 results. We have reviewed all of these results on our end, and have not found them to be issues. Much of the interesting issues are regarding reentrancy, and we have implemented a per-pool reentrancy guard in the SFPM. Please do not submit slither results as findings unless you have *confirmed* there is a specific exploitable issue resulting in negative consequences linked to the result. 
