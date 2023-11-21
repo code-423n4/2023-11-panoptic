@@ -100,7 +100,7 @@ All files in the `contracts` directory are in scope.
 ```
 - If you have a public code repo, please share it here: N/A
 - How many contracts are in scope?: 13
-- Total SLoC for these contracts?:  1564
+- Total SLoC for these contracts?:  1817
 - How many external imports are there?:  2
 - How many separate interfaces and struct definitions are there for the contracts within scope?:  1
 - Does most of your code generally use composition or inheritance?:  Composition
