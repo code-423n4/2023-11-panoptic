@@ -1,47 +1,3 @@
-# ✨ So you want to run an audit
-
-This `README.md` contains a set of checklists for our audit collaboration.
-
-Your audit will use two repos: 
-- **an _audit_ repo** (this one), which is used for scoping your audit and for providing information to wardens
-- **a _findings_ repo**, where issues are submitted (shared with you after the audit) 
-
-Ultimately, when we launch the audit, this repo will be made public and will contain the smart contracts to be reviewed and all the information needed for audit participants. The findings repo will be made public after the audit report is published and your team has mitigated the identified issues.
-
-Some of the checklists in this doc are for **C4 (🐺)** and some of them are for **you as the audit sponsor (⭐️)**.
-
----
-
-# Repo setup
-
-## ⭐️ Sponsor: Add code to this repo
-
-- [ ] Create a PR to this repo with the below changes:
-- [ ] Provide a self-contained repository with working commands that will build (at least) all in-scope contracts, and commands that will run tests producing gas reports for the relevant contracts.
-- [ ] Make sure your code is thoroughly commented using the [NatSpec format](https://docs.soliditylang.org/en/v0.5.10/natspec-format.html#natspec-format).
-- [ ] Please have final versions of contracts and documentation added/updated in this repo **no less than 48 business hours prior to audit start time.**
-- [ ] Be prepared for a 🚨code freeze🚨 for the duration of the audit — important because it establishes a level playing field. We want to ensure everyone's looking at the same code, no matter when they look during the audit. (Note: this includes your own repo, since a PR can leak alpha to our wardens!)
-
-
----
-
-## ⭐️ Sponsor: Edit this `README.md` file
-
-- [ ] Modify the contents of this `README.md` file. Describe how your code is supposed to work with links to any relevent documentation and any other criteria/details that the C4 Wardens should keep in mind when reviewing. ([Here's a well-constructed example.](https://github.com/code-423n4/2022-08-foundation#readme))
-- [ ] Review the Gas award pool amount. This can be adjusted up or down, based on your preference - just flag it for Code4rena staff so we can update the pool totals across all comms channels.
-- [ ] Optional / nice to have: pre-record a high-level overview of your protocol (not just specific smart contract functions). This saves wardens a lot of time wading through documentation.
-- [ ] [This checklist in Notion](https://code4rena.notion.site/Key-info-for-Code4rena-sponsors-f60764c4c4574bbf8e7a6dbd72cc49b4#0cafa01e6201462e9f78677a39e09746) provides some best practices for Code4rena audits.
-
-## ⭐️ Sponsor: Final touches
-- [ ] Review and confirm the details in the section titled "Scoping details" and alert Code4rena staff of any changes.
-- [ ] Check that images and other files used in this README have been uploaded to the repo as a file and then linked in the README using absolute path (e.g. `https://github.com/code-423n4/yourrepo-url/filepath.png`)
-- [ ] Ensure that *all* links and image/file paths in this README use absolute paths, not relative paths
-- [ ] Check that all README information is in markdown format (HTML does not render on Code4rena.com)
-- [ ] Remove any part of this template that's not relevant to the final version of the README (e.g. instructions in brackets and italic)
-- [ ] Delete this checklist and all text above the line below when you're ready.
-
----
-
 # Panoptic audit details
 - Total Prize Pool: $60,500 USDC 
   - HM awards: $41,250 USDC 
@@ -57,7 +13,7 @@ Some of the checklists in this doc are for **C4 (🐺)** and some of them are fo
 - [Read our guidelines for more details](https://docs.code4rena.com/roles/wardens)
 - Starts November 27, 2023 20:00 UTC 
 - Ends December 4, 2023 20:00 UTC
-- 
+
 ## Automated Findings / Publicly Known Issues
 
 The 4naly3er report can be found [here](https://github.com/code-423n4/2023-11-panoptic/blob/main/4naly3er-report.md).
@@ -66,62 +22,81 @@ Automated findings output for the audit can be found [here](https://github.com/c
 
 _Note for C4 wardens: Anything included in this `Automated Findings / Publicly Known Issues` section is considered a publicly known issue and is ineligible for awards._
 
-[ ⭐️ SPONSORS: Are there any known issues or risks deemed acceptable that shouldn't lead to a valid finding? If so, list them here. ]
-
+- Transfers of ERC1155 SFPM tokens are very limited by design. It is expected that certain accounts will be unable to transfer or receive tokens. 
+Some tokens may not be transferable at all.
+- Construction helper functions (prefixed with add) in the TokenId library and other types do not perform extensive input validation. Passing invalid or nonsensical inputs into these functions or attempting to overwrite already filled slots may yield unexpected or invalid results. This is by design, so it is expected that users
+of these functions will validate the inputs beforehand. 
+- Pools with a tick spacing of 1 are not currently supported. For the purposes of this audit, the only tick spacings that are supported are 10, 60, and 200 (corresponding to fee tiers of 5bps, 30bps, and 100bps respectively).
+- Very large quantities of tokens are not supported. It should be assumed that for any given pool, the cumulative amount of tokens that enter the system (associated with that pool, through adding liquidity, collection, etc.) will not exceed 2^127 - 1. Note that this is only a per-pool assumption, so if it is broken on one pool it should not affect the operation of any other pools, only the pool in question.
 
 # Overview
 
-[ ⭐️ SPONSORS: add info here ]
+The SemiFungiblePositionManager gas-efficient alternative to Uniswap’s NonFungiblePositionManager that manages complex, multi-leg Uniswap positions encoded in ERC1155 tokenIds, performs swaps allowing users to mint positions with only one type of token, and, most crucially, supports the minting of both typical LP positions where liquidity is added to Uniswap and “long” positions where Uniswap liquidity is burnt.
+
+This contract is a component of the Panoptic V1 protocol, but also serves as a standalone liquidity manager open for use by any user or protocol.
 
 ## Links
 
-- **Previous audits:** 
-- **Documentation:**
-- **Website:**
-- **Twitter:** 
-- **Discord:** 
+- [Panoptic's Website](https://www.panoptic.xyz)
+- [Twitter](https://twitter.com/Panoptic_xyz)
+- [Discord](https://discord.gg/7fE8SN9pRT)
+- [Blog](https://www.panoptic.xyz/blog)
+- [YouTube](https://www.youtube.com/@Panopticxyz)
 
 
 # Scope
 
-[ ⭐️ SPONSORS: add scoping and technical details here ]
-
-- [ ] In the table format shown below, provide the name of each contract and:
-  - [ ] source lines of code (excluding blank lines and comments) in each *For line of code counts, we recommend running prettier with a 100-character line length, and using [cloc](https://github.com/AlDanial/cloc).* 
-  - [ ] external contracts called in each
-  - [ ] libraries used in each
-
-*List all files in scope in the table below (along with hyperlinks) -- and feel free to add notes here to emphasize areas of focus.*
-
-| Contract | SLOC | Purpose | Libraries used |  
+| Contract | SLOC | Purpose | Libraries used |
 | ----------- | ----------- | ----------- | ----------- |
-| [contracts/folder/sample.sol](https://github.com/code-423n4/repo-name/blob/contracts/folder/sample.sol) | 123 | This contract does XYZ | [`@openzeppelin/*`](https://openzeppelin.com/contracts/) |
+| [contracts/SemiFungiblePositionManager.sol](https://github.com/code-423n4/2023-11-panoptic/blob/contracts/SemiFungiblePositionManager.sol) | 757 | The 'engine' of Panoptic - manages all Uniswap V3 positions in the protocol as well as being a more advanced, gas-efficient alternative to NFPM for Uniswap LPs | |
+| [contracts/tokens/ERC1155Minimal.sol](https://github.com/code-423n4/2023-11-panoptic/blob/contracts/tokens/ERC1155Minimal.sol) | 129 | A minimalist implementation of the ERC1155 token standard without metadata | [`@openzeppelin/*`](https://openzeppelin.com/contracts/) |
+| [contracts/types/LeftRight.sol](https://github.com/code-423n4/2023-11-panoptic/blob/contracts/types/LeftRight.sol) | 91 | Implementation for a set of custom data types that can hold two 128-bit numbers | |
+| [contracts/types/LiquidityChunk.sol](https://github.com/code-423n4/2023-11-panoptic/blob/contracts/types/LiquidityChunk.sol) | 45 | Implementation for a custom data type that can represent a liquidity chunk of a given size in Uniswap - containing a tickLower, tickUpper, and liquidity | |
+| [contracts/types/TokenId.sol](https://github.com/code-423n4/2023-11-panoptic/blob/contracts/types/TokenId.sol) | 290 | Implementation for the custom data type used in the SFPM and Panoptic to encode position data in 256-bit ERC1155 tokenIds - holds a pool identifier and up to four full position legs | |
+| [contracts/libraries/CallbackLib.sol](https://github.com/code-423n4/2023-11-panoptic/blob/contracts/libraries/CallbackLib.sol) | 36 | Library for verifying and decoding Uniswap callbacks | |
+| [contracts/libraries/Constants.sol](https://github.com/code-423n4/2023-11-panoptic/blob/contracts/libraries/Constants.sol) | 13 | Library of Constants used in Panoptic | |
+| [contracts/libraries/Errors.sol](https://github.com/code-423n4/2023-11-panoptic/blob/contracts/libraries/Errors.sol) | 19 | Contains all custom errors used in Panoptic's core contracts | |
+| [contracts/libraries/FeesCalc.sol](https://github.com/code-423n4/2023-11-panoptic/blob/contracts/libraries/FeesCalc.sol) | 52 | Utility to calculate up-to-date swap fees for liquidity chunks | |
+| [contracts/libraries/Math.sol](https://github.com/code-423n4/2023-11-panoptic/blob/contracts/libraries/Math.sol) | 266 | Library of generic math functions like abs(), mulDiv, etc | |
+| [contracts/libraries/PanopticMath.sol](https://github.com/code-423n4/2023-11-panoptic/blob/contracts/libraries/PanopticMath.sol) | 82 | Library containing advanced Panoptic/Uniswap-specific functionality such as our TWAP, price conversions, and position sizing math | |
+| [contracts/libraries/SafeTransferLib.sol](https://github.com/code-423n4/2023-11-panoptic/blob/contracts/libraries/SafeTransferLib.sol) | 19 | Safe ERC20 transfer library that gracefully handles missing return values | |
+| [contracts/multicall/Multicall.sol](https://github.com/code-423n4/2023-11-panoptic/blob/contracts/multicall/Multicall.sol) | 18 | Adds a function to inheriting contracts that allows for multiple calls to be executed in a single transaction | |
 
+```ml
+contracts/
+├── SemiFungiblePositionManager — "The 'engine' of Panoptic - manages all Uniswap V3 positions in the protocol as well as being a more advanced, gas-efficient alternative to NFPM for Uniswap LPs"
+├── tokens
+│   └── ERC1155Minimal — "A minimalist implementation of the ERC1155 token standard without metadata"
+├── types
+│   ├── LeftRight — "Implementation for a set of custom data types that can hold two 128-bit numbers"
+│   ├── LiquidityChunk — "Implementation for a custom data type that can represent a liquidity chunk of a given size in Uniswap - containing a tickLower, tickUpper, and liquidity"
+│   └── TokenId — "Implemenation for the custom data type used in the SFPM and Panoptic to encode position data in 256-bit ERC1155 tokenIds - holds a pool identifier and up to four full position legs"
+├── libraries
+│   ├── CallbackLib — "Library for verifying and decoding Uniswap callbacks"
+│   ├── Constants — "Library of Constants used in Panoptic"
+│   ├── Errors — "Contains all custom errors used in Panoptic's core contracts"
+│   ├── FeesCalc — "Utility to calculate up-to-date swap fees for liquidity chunks"
+│   ├── Math — "Library of generic math functions like abs(), mulDiv, etc"
+│   ├── PanopticMath — "Library containing advanced Panoptic/Uniswap-specific functionality such as our TWAP, price conversions, and position sizing math"
+│   └── SafeTransferLib — "Safe ERC20 transfer library that gracefully handles missing return values"
+└── multicall
+   └── Multicall — "Adds a function to inheriting contracts that allows for multiple calls to be executed in a single transaction"
+```
 ## Out of scope
-
-*List any files/contracts that are out of scope for this audit.*
+All files in the `contracts` directory are in scope.
 
 # Additional Context
-
-- [ ] Describe any novel or unique curve logic or mathematical models implemented in the contracts
-- [ ] Please list specific ERC20 that your protocol is anticipated to interact with. Could be "any" (literally anything, fee on transfer tokens, ERC777 tokens and so forth) or a list of tokens you envision using on launch.
-- [ ] Please list specific ERC721 that your protocol is anticipated to interact with.
-- [ ] Which blockchains will this code be deployed to, and are considered in scope for this audit?
-- [ ] Please list all trusted roles (e.g. operators, slashers, pausers, etc.), the privileges they hold, and any conditions under which privilege escalation is expected/allowable
-- [ ] In the event of a DOS, could you outline a minimum duration after which you would consider a finding to be valid? This question is asked in the context of most systems' capacity to handle DoS attacks gracefully for a certain period.
-- [ ] Is any part of your implementation intended to conform to any EIP's? If yes, please list the contracts in this format: 
-  - `Contract1`: Should comply with `ERC/EIPX`
-  - `Contract2`: Should comply with `ERC/EIPY`
-
-## Attack ideas (Where to look for bugs)
-*List specific areas to address - see [this blog post](https://medium.com/code4rena/the-security-council-elections-within-the-arbitrum-dao-a-comprehensive-guide-aa6d001aae60#9adb) for an example*
+- Any compliant ERC20 token that is part of a Uniswap V3 pool and is not a fee-on-transfer token is supported, including ERC-777 tokens.
+- The SFPM may be deployed to Ethereum, Arbitrum, Polygon, Optimisim, BSC, Base, and Avalanche, and other EVM chains with active Uniswap V3 deployments.
+- EIP Compliance
+  - `SemiFungiblePositionManager`: Should comply with `ERC1155`
 
 ## Main invariants
-*Describe the project's main invariants (properties that should NEVER EVER be broken).*
-
+- Users of the SFPM can only remove liquidity (via isLong==1 or burning positions) that they have previously added under the same (tickLower, tickUpper, tokenType) key. They cannot remove liquidity owned by other users.
+- Fees collected from Uniswap during any given operation should not exceed the amount of fees earned by the liquidity owned by the user performing the operation.
+- Fees paid to a given user should not exceed the amount of fees earned by the liquidity owned by that user.
+  
 ## Scoping Details 
-[ ⭐️ SPONSORS: please confirm/edit the information below. ]
-
 ```
 - If you have a public code repo, please share it here: N/A
 - How many contracts are in scope?: 13
@@ -143,7 +118,30 @@ _Note for C4 wardens: Anything included in this `Automated Findings / Publicly K
 ```
 
 # Tests
+Clone and initialize submodules:
+```bash
+git clone --recurse-submodules https://github.com/code-423n4/2023-11-panoptic.git
+```
 
-*Provide every step required to build the project from a fresh git clone, as well as steps to run the tests with a gas report.* 
+Build the contracts:
+```bash
+forge build
+```
 
-*Note: Many wardens run Slither as a first pass for testing.  Please document any known errors with no workaround.* 
+Test the contracts:
+```bash
+forge test
+```
+
+Gas report:
+```bash
+forge test --gas-report
+```
+
+Note that due to the complex and fuzzing-heavy nature of the tests, they may be slow to run on a public RPC. If you have a local mainnet node, 
+you may want to run the tests against that instead. If you want to write your own tests, we recommend using the `--match-test testName` flag to ensure
+only the tests you want to run are executed.
+
+## Slither
+Running slither should produce 156 results. We have reviewed all of these results on our end, and have not found them to be issues. Much of the interesting issues are regarding reentrancy, and we have implemented a per-pool
+reentrancy guard in the SFPM. Please do not submit slither results as findings unless you have *confirmed* there is a specific exploitable issue resulting in negative consequences linked to the result. 
