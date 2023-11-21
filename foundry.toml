@@ -1,0 +1,27 @@
+[profile.default]
+src = 'contracts'
+test = 'test/foundry'
+libs = ['lib']
+no_match_path = "contracts/*"
+solc_version = '0.8.18'
+optimizer = true
+optimizer_runs = 18_000
+viaIR = false
+eth_rpc_url = "https://eth.public-rpc.com"
+
+[profile.test]
+fork_block_number = 17237181
+
+[profile.ci_sizes]
+optimizer_runs = 18_000
+test = 'DO_NOT_COMPILE'
+
+[profile.ci_sizes_ir]
+optimizer_runs = 200
+test = 'DO_NOT_COMPILE'
+viaIR = true
+
+[fuzz]
+# can increase this to 1000+ if you have a local mainnet node
+runs = 1
+max_test_rejects = 9_999_999
