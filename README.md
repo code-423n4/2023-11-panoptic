@@ -12,7 +12,7 @@
 - Submit findings [using the C4 form](https://code4rena.com/contests/2023-11-panoptic/submit)
 - [Read our guidelines for more details](https://docs.code4rena.com/roles/wardens)
 - Starts November 27, 2023 20:00 UTC 
-- Ends December 5, 2023 20:00 UTC
+- Ends December 4, 2023 20:00 UTC
 
 ## Automated Findings / Publicly Known Issues
 
