@@ -31,7 +31,7 @@ of these functions will validate the inputs beforehand.
 
 # Overview
 
-The SemiFungiblePositionManager gas-efficient alternative to Uniswap’s NonFungiblePositionManager that manages complex, multi-leg Uniswap positions encoded in ERC1155 tokenIds, performs swaps allowing users to mint positions with only one type of token, and, most crucially, supports the minting of both typical LP positions where liquidity is added to Uniswap and “long” positions where Uniswap liquidity is burnt.
+The SemiFungiblePositionManager is a gas-efficient alternative to Uniswap’s NonFungiblePositionManager that manages complex, multi-leg Uniswap positions encoded in ERC1155 tokenIds, performs swaps allowing users to mint positions with only one type of token, and, most crucially, supports the minting of both typical LP positions where liquidity is added to Uniswap and “long” positions where Uniswap liquidity is burnt.
 
 This contract is a component of the Panoptic V1 protocol, but also serves as a standalone liquidity manager open for use by any user or protocol.
 
