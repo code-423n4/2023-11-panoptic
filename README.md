@@ -28,7 +28,6 @@ Some tokens may not be transferable at all.
 of these functions will validate the inputs beforehand. 
 - Pools with a tick spacing of 1 are not currently supported. For the purposes of this audit, the only tick spacings that are supported are 10, 60, and 200 (corresponding to fee tiers of 5bps, 30bps, and 100bps respectively).
 - Very large quantities of tokens are not supported. It should be assumed that for any given pool, the cumulative amount of tokens that enter the system (associated with that pool, through adding liquidity, collection, etc.) will not exceed 2^127 - 1. Note that this is only a per-pool assumption, so if it is broken on one pool it should not affect the operation of any other pools, only the pool in question.
-- Any submissions involving a call of the function `rollTokenizedPositions` will not be accepted. This function will be removed after the completion of this audit.
 
 # Overview
 
@@ -49,14 +48,14 @@ This contract is a component of the Panoptic V1 protocol, but also serves as a s
 
 | Contract | SLOC | Purpose | Libraries used |
 | ----------- | ----------- | ----------- | ----------- |
-| [contracts/SemiFungiblePositionManager.sol](https://github.com/code-423n4/2023-11-panoptic/blob/main/contracts/SemiFungiblePositionManager.sol) | 757 | The 'engine' of Panoptic - manages all Uniswap V3 positions in the protocol as well as being a more advanced, gas-efficient alternative to NFPM for Uniswap LPs | |
+| [contracts/SemiFungiblePositionManager.sol](https://github.com/code-423n4/2023-11-panoptic/blob/main/contracts/SemiFungiblePositionManager.sol) | 666 | The 'engine' of Panoptic - manages all Uniswap V3 positions in the protocol as well as being a more advanced, gas-efficient alternative to NFPM for Uniswap LPs | |
 | [contracts/tokens/ERC1155Minimal.sol](https://github.com/code-423n4/2023-11-panoptic/blob/main/contracts/tokens/ERC1155Minimal.sol) | 129 | A minimalist implementation of the ERC1155 token standard without metadata | [`@openzeppelin/*`](https://openzeppelin.com/contracts/) |
 | [contracts/types/LeftRight.sol](https://github.com/code-423n4/2023-11-panoptic/blob/main/contracts/types/LeftRight.sol) | 91 | Implementation for a set of custom data types that can hold two 128-bit numbers | |
 | [contracts/types/LiquidityChunk.sol](https://github.com/code-423n4/2023-11-panoptic/blob/main/contracts/types/LiquidityChunk.sol) | 45 | Implementation for a custom data type that can represent a liquidity chunk of a given size in Uniswap - containing a tickLower, tickUpper, and liquidity | |
-| [contracts/types/TokenId.sol](https://github.com/code-423n4/2023-11-panoptic/blob/main/contracts/types/TokenId.sol) | 290 | Implementation for the custom data type used in the SFPM and Panoptic to encode position data in 256-bit ERC1155 tokenIds - holds a pool identifier and up to four full position legs | |
+| [contracts/types/TokenId.sol](https://github.com/code-423n4/2023-11-panoptic/blob/main/contracts/types/TokenId.sol) | 241 | Implementation for the custom data type used in the SFPM and Panoptic to encode position data in 256-bit ERC1155 tokenIds - holds a pool identifier and up to four full position legs | |
 | [contracts/libraries/CallbackLib.sol](https://github.com/code-423n4/2023-11-panoptic/blob/main/contracts/libraries/CallbackLib.sol) | 36 | Library for verifying and decoding Uniswap callbacks | |
 | [contracts/libraries/Constants.sol](https://github.com/code-423n4/2023-11-panoptic/blob/main/contracts/libraries/Constants.sol) | 13 | Library of Constants used in Panoptic | |
-| [contracts/libraries/Errors.sol](https://github.com/code-423n4/2023-11-panoptic/blob/main/contracts/libraries/Errors.sol) | 19 | Contains all custom errors used in Panoptic's core contracts | |
+| [contracts/libraries/Errors.sol](https://github.com/code-423n4/2023-11-panoptic/blob/main/contracts/libraries/Errors.sol) | 18 | Contains all custom errors used in Panoptic's core contracts | |
 | [contracts/libraries/FeesCalc.sol](https://github.com/code-423n4/2023-11-panoptic/blob/main/contracts/libraries/FeesCalc.sol) | 52 | Utility to calculate up-to-date swap fees for liquidity chunks | |
 | [contracts/libraries/Math.sol](https://github.com/code-423n4/2023-11-panoptic/blob/main/contracts/libraries/Math.sol) | 266 | Library of generic math functions like abs(), mulDiv, etc | |
 | [contracts/libraries/PanopticMath.sol](https://github.com/code-423n4/2023-11-panoptic/blob/main/contracts/libraries/PanopticMath.sol) | 82 | Library containing advanced Panoptic/Uniswap-specific functionality such as our TWAP, price conversions, and position sizing math | |
@@ -101,7 +100,7 @@ All files in the `contracts` directory are in scope.
 ```
 - If you have a public code repo, please share it here: N/A
 - How many contracts are in scope?: 13
-- Total SLoC for these contracts?:  1817
+- Total SLoC for these contracts?:  1676
 - How many external imports are there?:  2
 - How many separate interfaces and struct definitions are there for the contracts within scope?:  1
 - Does most of your code generally use composition or inheritance?:  Composition
