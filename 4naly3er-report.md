@@ -7,11 +7,11 @@
 | [GAS-1](#GAS-1) | Use assembly to check for `address(0)` | 2 |
 | [GAS-2](#GAS-2) | Using bools for storage incurs overhead | 3 |
 | [GAS-3](#GAS-3) | Cache array length outside of loop | 4 |
-| [GAS-4](#GAS-4) | For Operations that will not overflow, you could use unchecked | 566 |
-| [GAS-5](#GAS-5) | Don't initialize variables with default value | 9 |
+| [GAS-4](#GAS-4) | For Operations that will not overflow, you could use unchecked | 559 |
+| [GAS-5](#GAS-5) | Don't initialize variables with default value | 7 |
 | [GAS-6](#GAS-6) | Use shift Right/Left instead of division/multiplication if possible | 1 |
 | [GAS-7](#GAS-7) | Use != 0 instead of > 0 for unsigned integer comparison | 12 |
-| [GAS-8](#GAS-8) | `internal` functions not called by the contract should be removed | 60 |
+| [GAS-8](#GAS-8) | `internal` functions not called by the contract should be removed | 57 |
 
 ### <a name="GAS-1"></a>[GAS-1] Use assembly to check for `address(0)`
 
@@ -22,9 +22,9 @@
 ```solidity
 File: contracts/SemiFungiblePositionManager.sol
 
-412:         // @dev in the unlikely case that there is a collision between the first 8 bytes of two different Uni v3 pools
+366:         // @dev in the unlikely case that there is a collision between the first 8 bytes of two different Uni v3 pools
 
-431:         }
+385:         }
 
 ```
 
@@ -39,9 +39,9 @@ Use uint256(1) and uint256(2) for true/false to avoid a Gwarmaccess (100 gas), a
 ```solidity
 File: contracts/SemiFungiblePositionManager.sol
 
-140:     bool internal constant MINT = false;
+127:     bool internal constant MINT = false;
 
-141:     bool internal constant BURN = true;
+128:     bool internal constant BURN = true;
 
 ```
 
@@ -65,7 +65,7 @@ If not cached, the solidity compiler will always read the length of the array du
 ```solidity
 File: contracts/SemiFungiblePositionManager.sol
 
-666:         for (uint256 i = 0; i < ids.length; ) {
+550:         for (uint256 i = 0; i < ids.length; ) {
 
 ```
 
@@ -93,7 +93,7 @@ File: contracts/tokens/ERC1155Minimal.sol
 
 ### <a name="GAS-4"></a>[GAS-4] For Operations that will not overflow, you could use unchecked
 
-*Instances (566)*:
+*Instances (559)*:
 
 ```solidity
 File: contracts/SemiFungiblePositionManager.sol
@@ -134,441 +134,439 @@ File: contracts/SemiFungiblePositionManager.sol
 
 21: import {TokenId} from "@types/TokenId.sol";
 
-124:     using TokenId for uint256; // an option position
+111:     using TokenId for uint256; // an option position
 
-124:     using TokenId for uint256; // an option position
+111:     using TokenId for uint256; // an option position
 
-125:     using LiquidityChunk for uint256; // a leg within an option position `tokenId`
+112:     using LiquidityChunk for uint256; // a leg within an option position `tokenId`
 
-125:     using LiquidityChunk for uint256; // a leg within an option position `tokenId`
+112:     using LiquidityChunk for uint256; // a leg within an option position `tokenId`
 
-174:           │  ┌────┐-T      due isLong=1   in the UniswapV3Pool 
+161:           │  ┌────┐-T      due isLong=1   in the UniswapV3Pool 
 
-176:           │  │    │                        ┌────┐-(T-R)  
+163:           │  │    │                        ┌────┐-(T-R)  
 
-176:           │  │    │                        ┌────┐-(T-R)  
+163:           │  │    │                        ┌────┐-(T-R)  
 
-177:           │  │    │         ┌────┐-R       │    │          
+164:           │  │    │         ┌────┐-R       │    │          
 
-180:              total=T       removed=R      net=(T-R)
+167:              total=T       removed=R      net=(T-R)
 
-197:         keep track of the amount of fees that *would have been collected*, we call this the owed
+184:         keep track of the amount of fees that *would have been collected*, we call this the owed
 
-197:         keep track of the amount of fees that *would have been collected*, we call this the owed
+184:         keep track of the amount of fees that *would have been collected*, we call this the owed
 
-205:         same tick using a tokenId with a isLong=1 parameter. Because the netLiquidity is only (T-R),
+192:         same tick using a tokenId with a isLong=1 parameter. Because the netLiquidity is only (T-R),
 
-208:               net_feesCollectedX128 = feeGrowthX128 * (T - R)
+195:               net_feesCollectedX128 = feeGrowthX128 * (T - R)
 
-208:               net_feesCollectedX128 = feeGrowthX128 * (T - R)
+195:               net_feesCollectedX128 = feeGrowthX128 * (T - R)
 
-209:                                     = feeGrowthX128 * N                                     
+196:                                     = feeGrowthX128 * N                                     
 
-211:         where N = netLiquidity = T-R. Had that liquidity never been removed, we want the gross
+198:         where N = netLiquidity = T-R. Had that liquidity never been removed, we want the gross
 
-214:               gross_feesCollectedX128 = feeGrowthX128 * T
+201:               gross_feesCollectedX128 = feeGrowthX128 * T
 
-222:               gross_feesCollectedX128 = net_feesCollectedX128 + owed_feesCollectedX128
+209:               gross_feesCollectedX128 = net_feesCollectedX128 + owed_feesCollectedX128
 
-226:               owed_feesCollectedX128 = feeGrowthX128 * R * (1 + spread)                      (Eqn 1)
+213:               owed_feesCollectedX128 = feeGrowthX128 * R * (1 + spread)                      (Eqn 1)
 
-226:               owed_feesCollectedX128 = feeGrowthX128 * R * (1 + spread)                      (Eqn 1)
+213:               owed_feesCollectedX128 = feeGrowthX128 * R * (1 + spread)                      (Eqn 1)
 
-226:               owed_feesCollectedX128 = feeGrowthX128 * R * (1 + spread)                      (Eqn 1)
+213:               owed_feesCollectedX128 = feeGrowthX128 * R * (1 + spread)                      (Eqn 1)
 
-230:               spread = ν*(liquidity removed from that strike)/(netLiquidity remaining at that strike)
+217:               spread = ν*(liquidity removed from that strike)/(netLiquidity remaining at that strike)
 
-230:               spread = ν*(liquidity removed from that strike)/(netLiquidity remaining at that strike)
+217:               spread = ν*(liquidity removed from that strike)/(netLiquidity remaining at that strike)
 
-231:                      = ν*R/N
+218:                      = ν*R/N
 
-231:                      = ν*R/N
+218:                      = ν*R/N
 
-235:               gross_feesCollectedX128 = feeGrowthX128 * N + feeGrowthX128*R*(1 + ν*R/N) 
+222:               gross_feesCollectedX128 = feeGrowthX128 * N + feeGrowthX128*R*(1 + ν*R/N) 
 
-235:               gross_feesCollectedX128 = feeGrowthX128 * N + feeGrowthX128*R*(1 + ν*R/N) 
+222:               gross_feesCollectedX128 = feeGrowthX128 * N + feeGrowthX128*R*(1 + ν*R/N) 
 
-235:               gross_feesCollectedX128 = feeGrowthX128 * N + feeGrowthX128*R*(1 + ν*R/N) 
+222:               gross_feesCollectedX128 = feeGrowthX128 * N + feeGrowthX128*R*(1 + ν*R/N) 
 
-235:               gross_feesCollectedX128 = feeGrowthX128 * N + feeGrowthX128*R*(1 + ν*R/N) 
+222:               gross_feesCollectedX128 = feeGrowthX128 * N + feeGrowthX128*R*(1 + ν*R/N) 
 
-235:               gross_feesCollectedX128 = feeGrowthX128 * N + feeGrowthX128*R*(1 + ν*R/N) 
+222:               gross_feesCollectedX128 = feeGrowthX128 * N + feeGrowthX128*R*(1 + ν*R/N) 
 
-235:               gross_feesCollectedX128 = feeGrowthX128 * N + feeGrowthX128*R*(1 + ν*R/N) 
+222:               gross_feesCollectedX128 = feeGrowthX128 * N + feeGrowthX128*R*(1 + ν*R/N) 
 
-235:               gross_feesCollectedX128 = feeGrowthX128 * N + feeGrowthX128*R*(1 + ν*R/N) 
+222:               gross_feesCollectedX128 = feeGrowthX128 * N + feeGrowthX128*R*(1 + ν*R/N) 
 
-236:                                       = feeGrowthX128 * T + feesGrowthX128*ν*R^2/N         
+223:                                       = feeGrowthX128 * T + feesGrowthX128*ν*R^2/N         
 
-236:                                       = feeGrowthX128 * T + feesGrowthX128*ν*R^2/N         
+223:                                       = feeGrowthX128 * T + feesGrowthX128*ν*R^2/N         
 
-236:                                       = feeGrowthX128 * T + feesGrowthX128*ν*R^2/N         
+223:                                       = feeGrowthX128 * T + feesGrowthX128*ν*R^2/N         
 
-236:                                       = feeGrowthX128 * T + feesGrowthX128*ν*R^2/N         
+223:                                       = feeGrowthX128 * T + feesGrowthX128*ν*R^2/N         
 
-236:                                       = feeGrowthX128 * T + feesGrowthX128*ν*R^2/N         
+223:                                       = feeGrowthX128 * T + feesGrowthX128*ν*R^2/N         
 
-237:                                       = feeGrowthX128 * T * (1 + ν*R^2/(N*T))                (Eqn 2)
+224:                                       = feeGrowthX128 * T * (1 + ν*R^2/(N*T))                (Eqn 2)
 
-237:                                       = feeGrowthX128 * T * (1 + ν*R^2/(N*T))                (Eqn 2)
+224:                                       = feeGrowthX128 * T * (1 + ν*R^2/(N*T))                (Eqn 2)
 
-237:                                       = feeGrowthX128 * T * (1 + ν*R^2/(N*T))                (Eqn 2)
+224:                                       = feeGrowthX128 * T * (1 + ν*R^2/(N*T))                (Eqn 2)
 
-237:                                       = feeGrowthX128 * T * (1 + ν*R^2/(N*T))                (Eqn 2)
+224:                                       = feeGrowthX128 * T * (1 + ν*R^2/(N*T))                (Eqn 2)
 
-237:                                       = feeGrowthX128 * T * (1 + ν*R^2/(N*T))                (Eqn 2)
+224:                                       = feeGrowthX128 * T * (1 + ν*R^2/(N*T))                (Eqn 2)
 
-237:                                       = feeGrowthX128 * T * (1 + ν*R^2/(N*T))                (Eqn 2)
+224:                                       = feeGrowthX128 * T * (1 + ν*R^2/(N*T))                (Eqn 2)
 
-239:         The s_accountPremiumOwed accumulator tracks the feeGrowthX128 * R * (1 + spread) term
+226:         The s_accountPremiumOwed accumulator tracks the feeGrowthX128 * R * (1 + spread) term
 
-239:         The s_accountPremiumOwed accumulator tracks the feeGrowthX128 * R * (1 + spread) term
+226:         The s_accountPremiumOwed accumulator tracks the feeGrowthX128 * R * (1 + spread) term
 
-239:         The s_accountPremiumOwed accumulator tracks the feeGrowthX128 * R * (1 + spread) term
+226:         The s_accountPremiumOwed accumulator tracks the feeGrowthX128 * R * (1 + spread) term
 
-242:               s_accountPremiumOwed += feeGrowthX128 * R * (1 + ν*R/N) / R
+229:               s_accountPremiumOwed += feeGrowthX128 * R * (1 + ν*R/N) / R
 
-242:               s_accountPremiumOwed += feeGrowthX128 * R * (1 + ν*R/N) / R
+229:               s_accountPremiumOwed += feeGrowthX128 * R * (1 + ν*R/N) / R
 
-242:               s_accountPremiumOwed += feeGrowthX128 * R * (1 + ν*R/N) / R
+229:               s_accountPremiumOwed += feeGrowthX128 * R * (1 + ν*R/N) / R
 
-242:               s_accountPremiumOwed += feeGrowthX128 * R * (1 + ν*R/N) / R
+229:               s_accountPremiumOwed += feeGrowthX128 * R * (1 + ν*R/N) / R
 
-242:               s_accountPremiumOwed += feeGrowthX128 * R * (1 + ν*R/N) / R
+229:               s_accountPremiumOwed += feeGrowthX128 * R * (1 + ν*R/N) / R
 
-242:               s_accountPremiumOwed += feeGrowthX128 * R * (1 + ν*R/N) / R
+229:               s_accountPremiumOwed += feeGrowthX128 * R * (1 + ν*R/N) / R
 
-242:               s_accountPremiumOwed += feeGrowthX128 * R * (1 + ν*R/N) / R
+229:               s_accountPremiumOwed += feeGrowthX128 * R * (1 + ν*R/N) / R
 
-243:                                    += feeGrowthX128 * (T - R + ν*R)/N
+230:                                    += feeGrowthX128 * (T - R + ν*R)/N
 
-243:                                    += feeGrowthX128 * (T - R + ν*R)/N
+230:                                    += feeGrowthX128 * (T - R + ν*R)/N
 
-243:                                    += feeGrowthX128 * (T - R + ν*R)/N
+230:                                    += feeGrowthX128 * (T - R + ν*R)/N
 
-243:                                    += feeGrowthX128 * (T - R + ν*R)/N
+230:                                    += feeGrowthX128 * (T - R + ν*R)/N
 
-243:                                    += feeGrowthX128 * (T - R + ν*R)/N
+230:                                    += feeGrowthX128 * (T - R + ν*R)/N
 
-243:                                    += feeGrowthX128 * (T - R + ν*R)/N
+230:                                    += feeGrowthX128 * (T - R + ν*R)/N
 
-244:                                    += feeGrowthX128 * T/N * (1 - R/T + ν*R/T)
+231:                                    += feeGrowthX128 * T/N * (1 - R/T + ν*R/T)
 
-244:                                    += feeGrowthX128 * T/N * (1 - R/T + ν*R/T)
+231:                                    += feeGrowthX128 * T/N * (1 - R/T + ν*R/T)
 
-244:                                    += feeGrowthX128 * T/N * (1 - R/T + ν*R/T)
+231:                                    += feeGrowthX128 * T/N * (1 - R/T + ν*R/T)
 
-244:                                    += feeGrowthX128 * T/N * (1 - R/T + ν*R/T)
+231:                                    += feeGrowthX128 * T/N * (1 - R/T + ν*R/T)
 
-244:                                    += feeGrowthX128 * T/N * (1 - R/T + ν*R/T)
+231:                                    += feeGrowthX128 * T/N * (1 - R/T + ν*R/T)
 
-244:                                    += feeGrowthX128 * T/N * (1 - R/T + ν*R/T)
+231:                                    += feeGrowthX128 * T/N * (1 - R/T + ν*R/T)
 
-244:                                    += feeGrowthX128 * T/N * (1 - R/T + ν*R/T)
+231:                                    += feeGrowthX128 * T/N * (1 - R/T + ν*R/T)
 
-244:                                    += feeGrowthX128 * T/N * (1 - R/T + ν*R/T)
+231:                                    += feeGrowthX128 * T/N * (1 - R/T + ν*R/T)
 
-244:                                    += feeGrowthX128 * T/N * (1 - R/T + ν*R/T)
+231:                                    += feeGrowthX128 * T/N * (1 - R/T + ν*R/T)
 
-250:              feesCollected = feesGrowthX128 * (T-R)
+237:              feesCollected = feesGrowthX128 * (T-R)
 
-250:              feesCollected = feesGrowthX128 * (T-R)
+237:              feesCollected = feesGrowthX128 * (T-R)
 
-254:              feesGrowthX128 = feesCollected/N
+241:              feesGrowthX128 = feesCollected/N
 
-258:              s_accountPremiumOwed += feesCollected * T/N^2 * (1 - R/T + ν*R/T)          (Eqn 3)     
+245:              s_accountPremiumOwed += feesCollected * T/N^2 * (1 - R/T + ν*R/T)          (Eqn 3)     
 
-258:              s_accountPremiumOwed += feesCollected * T/N^2 * (1 - R/T + ν*R/T)          (Eqn 3)     
+245:              s_accountPremiumOwed += feesCollected * T/N^2 * (1 - R/T + ν*R/T)          (Eqn 3)     
 
-258:              s_accountPremiumOwed += feesCollected * T/N^2 * (1 - R/T + ν*R/T)          (Eqn 3)     
+245:              s_accountPremiumOwed += feesCollected * T/N^2 * (1 - R/T + ν*R/T)          (Eqn 3)     
 
-258:              s_accountPremiumOwed += feesCollected * T/N^2 * (1 - R/T + ν*R/T)          (Eqn 3)     
+245:              s_accountPremiumOwed += feesCollected * T/N^2 * (1 - R/T + ν*R/T)          (Eqn 3)     
 
-258:              s_accountPremiumOwed += feesCollected * T/N^2 * (1 - R/T + ν*R/T)          (Eqn 3)     
+245:              s_accountPremiumOwed += feesCollected * T/N^2 * (1 - R/T + ν*R/T)          (Eqn 3)     
 
-258:              s_accountPremiumOwed += feesCollected * T/N^2 * (1 - R/T + ν*R/T)          (Eqn 3)     
+245:              s_accountPremiumOwed += feesCollected * T/N^2 * (1 - R/T + ν*R/T)          (Eqn 3)     
 
-258:              s_accountPremiumOwed += feesCollected * T/N^2 * (1 - R/T + ν*R/T)          (Eqn 3)     
+245:              s_accountPremiumOwed += feesCollected * T/N^2 * (1 - R/T + ν*R/T)          (Eqn 3)     
 
-258:              s_accountPremiumOwed += feesCollected * T/N^2 * (1 - R/T + ν*R/T)          (Eqn 3)     
+245:              s_accountPremiumOwed += feesCollected * T/N^2 * (1 - R/T + ν*R/T)          (Eqn 3)     
 
-258:              s_accountPremiumOwed += feesCollected * T/N^2 * (1 - R/T + ν*R/T)          (Eqn 3)     
+245:              s_accountPremiumOwed += feesCollected * T/N^2 * (1 - R/T + ν*R/T)          (Eqn 3)     
 
-263:              owedPremia(t1, t2) = (s_accountPremiumOwed_t2-s_accountPremiumOwed_t1) * r
+250:              owedPremia(t1, t2) = (s_accountPremiumOwed_t2-s_accountPremiumOwed_t1) * r
 
-263:              owedPremia(t1, t2) = (s_accountPremiumOwed_t2-s_accountPremiumOwed_t1) * r
+250:              owedPremia(t1, t2) = (s_accountPremiumOwed_t2-s_accountPremiumOwed_t1) * r
 
-264:                                 = ∆feesGrowthX128 * r * T/N * (1 - R/T + ν*R/T)
+251:                                 = ∆feesGrowthX128 * r * T/N * (1 - R/T + ν*R/T)
 
-264:                                 = ∆feesGrowthX128 * r * T/N * (1 - R/T + ν*R/T)
+251:                                 = ∆feesGrowthX128 * r * T/N * (1 - R/T + ν*R/T)
 
-264:                                 = ∆feesGrowthX128 * r * T/N * (1 - R/T + ν*R/T)
+251:                                 = ∆feesGrowthX128 * r * T/N * (1 - R/T + ν*R/T)
 
-264:                                 = ∆feesGrowthX128 * r * T/N * (1 - R/T + ν*R/T)
+251:                                 = ∆feesGrowthX128 * r * T/N * (1 - R/T + ν*R/T)
 
-264:                                 = ∆feesGrowthX128 * r * T/N * (1 - R/T + ν*R/T)
+251:                                 = ∆feesGrowthX128 * r * T/N * (1 - R/T + ν*R/T)
 
-264:                                 = ∆feesGrowthX128 * r * T/N * (1 - R/T + ν*R/T)
+251:                                 = ∆feesGrowthX128 * r * T/N * (1 - R/T + ν*R/T)
 
-264:                                 = ∆feesGrowthX128 * r * T/N * (1 - R/T + ν*R/T)
+251:                                 = ∆feesGrowthX128 * r * T/N * (1 - R/T + ν*R/T)
 
-264:                                 = ∆feesGrowthX128 * r * T/N * (1 - R/T + ν*R/T)
+251:                                 = ∆feesGrowthX128 * r * T/N * (1 - R/T + ν*R/T)
 
-264:                                 = ∆feesGrowthX128 * r * T/N * (1 - R/T + ν*R/T)
+251:                                 = ∆feesGrowthX128 * r * T/N * (1 - R/T + ν*R/T)
 
-265:                                 = ∆feesGrowthX128 * r * (T - R + ν*R)/N
+252:                                 = ∆feesGrowthX128 * r * (T - R + ν*R)/N
 
-265:                                 = ∆feesGrowthX128 * r * (T - R + ν*R)/N
+252:                                 = ∆feesGrowthX128 * r * (T - R + ν*R)/N
 
-265:                                 = ∆feesGrowthX128 * r * (T - R + ν*R)/N
+252:                                 = ∆feesGrowthX128 * r * (T - R + ν*R)/N
 
-265:                                 = ∆feesGrowthX128 * r * (T - R + ν*R)/N
+252:                                 = ∆feesGrowthX128 * r * (T - R + ν*R)/N
 
-265:                                 = ∆feesGrowthX128 * r * (T - R + ν*R)/N
+252:                                 = ∆feesGrowthX128 * r * (T - R + ν*R)/N
 
-265:                                 = ∆feesGrowthX128 * r * (T - R + ν*R)/N
+252:                                 = ∆feesGrowthX128 * r * (T - R + ν*R)/N
 
-266:                                 = ∆feesGrowthX128 * r * (N + ν*R)/N
+253:                                 = ∆feesGrowthX128 * r * (N + ν*R)/N
 
-266:                                 = ∆feesGrowthX128 * r * (N + ν*R)/N
+253:                                 = ∆feesGrowthX128 * r * (N + ν*R)/N
 
-266:                                 = ∆feesGrowthX128 * r * (N + ν*R)/N
+253:                                 = ∆feesGrowthX128 * r * (N + ν*R)/N
 
-266:                                 = ∆feesGrowthX128 * r * (N + ν*R)/N
+253:                                 = ∆feesGrowthX128 * r * (N + ν*R)/N
 
-266:                                 = ∆feesGrowthX128 * r * (N + ν*R)/N
+253:                                 = ∆feesGrowthX128 * r * (N + ν*R)/N
 
-267:                                 = ∆feesGrowthX128 * r * (1 + ν*R/N)             (same as Eqn 1)
+254:                                 = ∆feesGrowthX128 * r * (1 + ν*R/N)             (same as Eqn 1)
 
-267:                                 = ∆feesGrowthX128 * r * (1 + ν*R/N)             (same as Eqn 1)
+254:                                 = ∆feesGrowthX128 * r * (1 + ν*R/N)             (same as Eqn 1)
 
-267:                                 = ∆feesGrowthX128 * r * (1 + ν*R/N)             (same as Eqn 1)
+254:                                 = ∆feesGrowthX128 * r * (1 + ν*R/N)             (same as Eqn 1)
 
-267:                                 = ∆feesGrowthX128 * r * (1 + ν*R/N)             (same as Eqn 1)
+254:                                 = ∆feesGrowthX128 * r * (1 + ν*R/N)             (same as Eqn 1)
 
-267:                                 = ∆feesGrowthX128 * r * (1 + ν*R/N)             (same as Eqn 1)
+254:                                 = ∆feesGrowthX128 * r * (1 + ν*R/N)             (same as Eqn 1)
 
-274:         However, since we require that Eqn 2 holds up-- ie. the gross fees collected should be equal
+261:         However, since we require that Eqn 2 holds up-- ie. the gross fees collected should be equal
 
-274:         However, since we require that Eqn 2 holds up-- ie. the gross fees collected should be equal
+261:         However, since we require that Eqn 2 holds up-- ie. the gross fees collected should be equal
 
-278:             s_accountPremiumGross += feesCollected * T/N^2 * (1 - R/T + ν*R^2/T^2)       (Eqn 4) 
+265:             s_accountPremiumGross += feesCollected * T/N^2 * (1 - R/T + ν*R^2/T^2)       (Eqn 4) 
 
-278:             s_accountPremiumGross += feesCollected * T/N^2 * (1 - R/T + ν*R^2/T^2)       (Eqn 4) 
+265:             s_accountPremiumGross += feesCollected * T/N^2 * (1 - R/T + ν*R^2/T^2)       (Eqn 4) 
 
-278:             s_accountPremiumGross += feesCollected * T/N^2 * (1 - R/T + ν*R^2/T^2)       (Eqn 4) 
+265:             s_accountPremiumGross += feesCollected * T/N^2 * (1 - R/T + ν*R^2/T^2)       (Eqn 4) 
 
-278:             s_accountPremiumGross += feesCollected * T/N^2 * (1 - R/T + ν*R^2/T^2)       (Eqn 4) 
+265:             s_accountPremiumGross += feesCollected * T/N^2 * (1 - R/T + ν*R^2/T^2)       (Eqn 4) 
 
-278:             s_accountPremiumGross += feesCollected * T/N^2 * (1 - R/T + ν*R^2/T^2)       (Eqn 4) 
+265:             s_accountPremiumGross += feesCollected * T/N^2 * (1 - R/T + ν*R^2/T^2)       (Eqn 4) 
 
-278:             s_accountPremiumGross += feesCollected * T/N^2 * (1 - R/T + ν*R^2/T^2)       (Eqn 4) 
+265:             s_accountPremiumGross += feesCollected * T/N^2 * (1 - R/T + ν*R^2/T^2)       (Eqn 4) 
 
-278:             s_accountPremiumGross += feesCollected * T/N^2 * (1 - R/T + ν*R^2/T^2)       (Eqn 4) 
+265:             s_accountPremiumGross += feesCollected * T/N^2 * (1 - R/T + ν*R^2/T^2)       (Eqn 4) 
 
-278:             s_accountPremiumGross += feesCollected * T/N^2 * (1 - R/T + ν*R^2/T^2)       (Eqn 4) 
+265:             s_accountPremiumGross += feesCollected * T/N^2 * (1 - R/T + ν*R^2/T^2)       (Eqn 4) 
 
-278:             s_accountPremiumGross += feesCollected * T/N^2 * (1 - R/T + ν*R^2/T^2)       (Eqn 4) 
+265:             s_accountPremiumGross += feesCollected * T/N^2 * (1 - R/T + ν*R^2/T^2)       (Eqn 4) 
 
-283:             grossPremia(t1, t2) = ∆(s_accountPremiumGross) * t
+270:             grossPremia(t1, t2) = ∆(s_accountPremiumGross) * t
 
-284:                                 = ∆feeGrowthX128 * t * T/N * (1 - R/T + ν*R^2/T^2) 
+271:                                 = ∆feeGrowthX128 * t * T/N * (1 - R/T + ν*R^2/T^2) 
 
-284:                                 = ∆feeGrowthX128 * t * T/N * (1 - R/T + ν*R^2/T^2) 
+271:                                 = ∆feeGrowthX128 * t * T/N * (1 - R/T + ν*R^2/T^2) 
 
-284:                                 = ∆feeGrowthX128 * t * T/N * (1 - R/T + ν*R^2/T^2) 
+271:                                 = ∆feeGrowthX128 * t * T/N * (1 - R/T + ν*R^2/T^2) 
 
-284:                                 = ∆feeGrowthX128 * t * T/N * (1 - R/T + ν*R^2/T^2) 
+271:                                 = ∆feeGrowthX128 * t * T/N * (1 - R/T + ν*R^2/T^2) 
 
-284:                                 = ∆feeGrowthX128 * t * T/N * (1 - R/T + ν*R^2/T^2) 
+271:                                 = ∆feeGrowthX128 * t * T/N * (1 - R/T + ν*R^2/T^2) 
 
-284:                                 = ∆feeGrowthX128 * t * T/N * (1 - R/T + ν*R^2/T^2) 
+271:                                 = ∆feeGrowthX128 * t * T/N * (1 - R/T + ν*R^2/T^2) 
 
-284:                                 = ∆feeGrowthX128 * t * T/N * (1 - R/T + ν*R^2/T^2) 
+271:                                 = ∆feeGrowthX128 * t * T/N * (1 - R/T + ν*R^2/T^2) 
 
-284:                                 = ∆feeGrowthX128 * t * T/N * (1 - R/T + ν*R^2/T^2) 
+271:                                 = ∆feeGrowthX128 * t * T/N * (1 - R/T + ν*R^2/T^2) 
 
-284:                                 = ∆feeGrowthX128 * t * T/N * (1 - R/T + ν*R^2/T^2) 
+271:                                 = ∆feeGrowthX128 * t * T/N * (1 - R/T + ν*R^2/T^2) 
 
-285:                                 = ∆feeGrowthX128 * t * (T - R + ν*R^2/T) / N 
+272:                                 = ∆feeGrowthX128 * t * (T - R + ν*R^2/T) / N 
 
-285:                                 = ∆feeGrowthX128 * t * (T - R + ν*R^2/T) / N 
+272:                                 = ∆feeGrowthX128 * t * (T - R + ν*R^2/T) / N 
 
-285:                                 = ∆feeGrowthX128 * t * (T - R + ν*R^2/T) / N 
+272:                                 = ∆feeGrowthX128 * t * (T - R + ν*R^2/T) / N 
 
-285:                                 = ∆feeGrowthX128 * t * (T - R + ν*R^2/T) / N 
+272:                                 = ∆feeGrowthX128 * t * (T - R + ν*R^2/T) / N 
 
-285:                                 = ∆feeGrowthX128 * t * (T - R + ν*R^2/T) / N 
+272:                                 = ∆feeGrowthX128 * t * (T - R + ν*R^2/T) / N 
 
-285:                                 = ∆feeGrowthX128 * t * (T - R + ν*R^2/T) / N 
+272:                                 = ∆feeGrowthX128 * t * (T - R + ν*R^2/T) / N 
 
-285:                                 = ∆feeGrowthX128 * t * (T - R + ν*R^2/T) / N 
+272:                                 = ∆feeGrowthX128 * t * (T - R + ν*R^2/T) / N 
 
-286:                                 = ∆feeGrowthX128 * t * (N + ν*R^2/T) / N
+273:                                 = ∆feeGrowthX128 * t * (N + ν*R^2/T) / N
 
-286:                                 = ∆feeGrowthX128 * t * (N + ν*R^2/T) / N
+273:                                 = ∆feeGrowthX128 * t * (N + ν*R^2/T) / N
 
-286:                                 = ∆feeGrowthX128 * t * (N + ν*R^2/T) / N
+273:                                 = ∆feeGrowthX128 * t * (N + ν*R^2/T) / N
 
-286:                                 = ∆feeGrowthX128 * t * (N + ν*R^2/T) / N
+273:                                 = ∆feeGrowthX128 * t * (N + ν*R^2/T) / N
 
-286:                                 = ∆feeGrowthX128 * t * (N + ν*R^2/T) / N
+273:                                 = ∆feeGrowthX128 * t * (N + ν*R^2/T) / N
 
-286:                                 = ∆feeGrowthX128 * t * (N + ν*R^2/T) / N
+273:                                 = ∆feeGrowthX128 * t * (N + ν*R^2/T) / N
 
-287:                                 = ∆feeGrowthX128 * t * (1  + ν*R^2/(N*T))   (same as Eqn 2)
+274:                                 = ∆feeGrowthX128 * t * (1  + ν*R^2/(N*T))   (same as Eqn 2)
 
-287:                                 = ∆feeGrowthX128 * t * (1  + ν*R^2/(N*T))   (same as Eqn 2)
+274:                                 = ∆feeGrowthX128 * t * (1  + ν*R^2/(N*T))   (same as Eqn 2)
 
-287:                                 = ∆feeGrowthX128 * t * (1  + ν*R^2/(N*T))   (same as Eqn 2)
+274:                                 = ∆feeGrowthX128 * t * (1  + ν*R^2/(N*T))   (same as Eqn 2)
 
-287:                                 = ∆feeGrowthX128 * t * (1  + ν*R^2/(N*T))   (same as Eqn 2)
+274:                                 = ∆feeGrowthX128 * t * (1  + ν*R^2/(N*T))   (same as Eqn 2)
 
-287:                                 = ∆feeGrowthX128 * t * (1  + ν*R^2/(N*T))   (same as Eqn 2)
+274:                                 = ∆feeGrowthX128 * t * (1  + ν*R^2/(N*T))   (same as Eqn 2)
 
-287:                                 = ∆feeGrowthX128 * t * (1  + ν*R^2/(N*T))   (same as Eqn 2)
+274:                                 = ∆feeGrowthX128 * t * (1  + ν*R^2/(N*T))   (same as Eqn 2)
 
-292:         long+short liquidity to guarantee that liquidity deposited always receives the correct
+279:         long+short liquidity to guarantee that liquidity deposited always receives the correct
 
-430:             s_AddrToPoolIdData[univ3pool] = uint256(poolId) + 2 ** 255;
+384:             s_AddrToPoolIdData[univ3pool] = uint256(poolId) + 2 ** 255;
 
-430:             s_AddrToPoolIdData[univ3pool] = uint256(poolId) + 2 ** 255;
+384:             s_AddrToPoolIdData[univ3pool] = uint256(poolId) + 2 ** 255;
 
-430:             s_AddrToPoolIdData[univ3pool] = uint256(poolId) + 2 ** 255;
+384:             s_AddrToPoolIdData[univ3pool] = uint256(poolId) + 2 ** 255;
 
-510:                            PUBLIC MINT/BURN/ROLL FUNCTIONS
+464:                        PUBLIC MINT/BURN FUNCTIONS
 
-510:                            PUBLIC MINT/BURN/ROLL FUNCTIONS
+553:                 ++i;
 
-669:                 ++i;
+553:                 ++i;
 
-669:                 ++i;
+632:                 ++leg;
 
-748:                 ++leg;
+632:                 ++leg;
 
-748:                 ++leg;
+748:         bool zeroForOne; // The direction of the swap, true for token0 to token1, false for token1 to token0
 
-867:         bool zeroForOne; // The direction of the swap, true for token0 to token1, false for token1 to token0
+748:         bool zeroForOne; // The direction of the swap, true for token0 to token1, false for token1 to token0
 
-867:         bool zeroForOne; // The direction of the swap, true for token0 to token1, false for token1 to token0
+749:         int256 swapAmount; // The amount of token0 or token1 to swap
 
-868:         int256 swapAmount; // The amount of token0 or token1 to swap
+749:         int256 swapAmount; // The amount of token0 or token1 to swap
 
-868:         int256 swapAmount; // The amount of token0 or token1 to swap
+804:                 int256 net0 = itm0 - PanopticMath.convert1to0(itm1, sqrtPriceX96);
 
-923:                 int256 net0 = itm0 - PanopticMath.convert1to0(itm1, sqrtPriceX96);
+809:                 swapAmount = -net0;
 
-928:                 swapAmount = -net0;
+812:                 swapAmount = -itm0;
 
-931:                 swapAmount = -itm0;
+815:                 swapAmount = -itm1;
 
-934:                 swapAmount = -itm1;
+829:                     ? Constants.MIN_V3POOL_SQRT_RATIO + 1
 
-948:                     ? Constants.MIN_V3POOL_SQRT_RATIO + 1
+830:                     : Constants.MAX_V3POOL_SQRT_RATIO - 1,
 
-949:                     : Constants.MAX_V3POOL_SQRT_RATIO - 1,
+877:                     _leg = _isBurn ? numLegs - leg - 1 : leg;
 
-996:                     _leg = _isBurn ? numLegs - leg - 1 : leg;
+877:                     _leg = _isBurn ? numLegs - leg - 1 : leg;
 
-996:                     _leg = _isBurn ? numLegs - leg - 1 : leg;
+899:                     amount0 += Math.getAmount0ForLiquidity(liquidityChunk);
 
-1018:                     amount0 += Math.getAmount0ForLiquidity(liquidityChunk);
+901:                     amount1 += Math.getAmount1ForLiquidity(liquidityChunk);
 
-1020:                     amount1 += Math.getAmount1ForLiquidity(liquidityChunk);
+910:                 ++leg;
 
-1029:                 ++leg;
+910:                 ++leg;
 
-1029:                 ++leg;
+959:         uint256 currentLiquidity = s_accountLiquidity[positionKey]; //cache
 
-1078:         uint256 currentLiquidity = s_accountLiquidity[positionKey]; //cache
+959:         uint256 currentLiquidity = s_accountLiquidity[positionKey]; //cache
 
-1078:         uint256 currentLiquidity = s_accountLiquidity[positionKey]; //cache
+974:                 updatedLiquidity = startingLiquidity + chunkLiquidity;
 
-1093:                 updatedLiquidity = startingLiquidity + chunkLiquidity;
+979:                     removedLiquidity -= chunkLiquidity;
 
-1098:                     removedLiquidity -= chunkLiquidity;
+993:                     updatedLiquidity = startingLiquidity - chunkLiquidity;
 
-1112:                     updatedLiquidity = startingLiquidity - chunkLiquidity;
+999:                     removedLiquidity += chunkLiquidity;
 
-1118:                     removedLiquidity += chunkLiquidity;
+1033:                 : _burnLiquidity(_liquidityChunk, _univ3pool); // from msg.sender to Uniswap
 
-1152:                 : _burnLiquidity(_liquidityChunk, _univ3pool); // from msg.sender to Uniswap
+1033:                 : _burnLiquidity(_liquidityChunk, _univ3pool); // from msg.sender to Uniswap
 
-1152:                 : _burnLiquidity(_liquidityChunk, _univ3pool); // from msg.sender to Uniswap
+1135:             CallbackLib.CallbackData({ // compute by reading values from univ3pool every time
 
-1254:             CallbackLib.CallbackData({ // compute by reading values from univ3pool every time
+1135:             CallbackLib.CallbackData({ // compute by reading values from univ3pool every time
 
-1254:             CallbackLib.CallbackData({ // compute by reading values from univ3pool every time
+1186:             movedAmounts = int256(0).toRightSlot(-int128(int256(amount0))).toLeftSlot(
 
-1305:             movedAmounts = int256(0).toRightSlot(-int128(int256(amount0))).toLeftSlot(
+1187:                 -int128(int256(amount1))
 
-1306:                 -int128(int256(amount1))
+1235:                     ? receivedAmount0 - uint128(-movedInLeg.rightSlot())
 
-1354:                     ? receivedAmount0 - uint128(-movedInLeg.rightSlot())
+1235:                     ? receivedAmount0 - uint128(-movedInLeg.rightSlot())
 
-1354:                     ? receivedAmount0 - uint128(-movedInLeg.rightSlot())
+1238:                     ? receivedAmount1 - uint128(-movedInLeg.leftSlot())
 
-1357:                     ? receivedAmount1 - uint128(-movedInLeg.leftSlot())
+1238:                     ? receivedAmount1 - uint128(-movedInLeg.leftSlot())
 
-1357:                     ? receivedAmount1 - uint128(-movedInLeg.leftSlot())
+1270:             uint256 totalLiquidity = netLiquidity + removedLiquidity;
 
-1389:             uint256 totalLiquidity = netLiquidity + removedLiquidity;
+1281:                     .mulDiv(collected0, totalLiquidity * 2 ** 64, netLiquidity ** 2)
 
-1400:                     .mulDiv(collected0, totalLiquidity * 2 ** 64, netLiquidity ** 2)
+1281:                     .mulDiv(collected0, totalLiquidity * 2 ** 64, netLiquidity ** 2)
 
-1400:                     .mulDiv(collected0, totalLiquidity * 2 ** 64, netLiquidity ** 2)
+1281:                     .mulDiv(collected0, totalLiquidity * 2 ** 64, netLiquidity ** 2)
 
-1400:                     .mulDiv(collected0, totalLiquidity * 2 ** 64, netLiquidity ** 2)
+1281:                     .mulDiv(collected0, totalLiquidity * 2 ** 64, netLiquidity ** 2)
 
-1400:                     .mulDiv(collected0, totalLiquidity * 2 ** 64, netLiquidity ** 2)
+1281:                     .mulDiv(collected0, totalLiquidity * 2 ** 64, netLiquidity ** 2)
 
-1400:                     .mulDiv(collected0, totalLiquidity * 2 ** 64, netLiquidity ** 2)
+1284:                     .mulDiv(collected1, totalLiquidity * 2 ** 64, netLiquidity ** 2)
 
-1403:                     .mulDiv(collected1, totalLiquidity * 2 ** 64, netLiquidity ** 2)
+1284:                     .mulDiv(collected1, totalLiquidity * 2 ** 64, netLiquidity ** 2)
 
-1403:                     .mulDiv(collected1, totalLiquidity * 2 ** 64, netLiquidity ** 2)
+1284:                     .mulDiv(collected1, totalLiquidity * 2 ** 64, netLiquidity ** 2)
 
-1403:                     .mulDiv(collected1, totalLiquidity * 2 ** 64, netLiquidity ** 2)
+1284:                     .mulDiv(collected1, totalLiquidity * 2 ** 64, netLiquidity ** 2)
 
-1403:                     .mulDiv(collected1, totalLiquidity * 2 ** 64, netLiquidity ** 2)
+1284:                     .mulDiv(collected1, totalLiquidity * 2 ** 64, netLiquidity ** 2)
 
-1403:                     .mulDiv(collected1, totalLiquidity * 2 ** 64, netLiquidity ** 2)
+1293:                     uint256 numerator = netLiquidity + (removedLiquidity / 2 ** VEGOID);
 
-1412:                     uint256 numerator = netLiquidity + (removedLiquidity / 2 ** VEGOID);
+1293:                     uint256 numerator = netLiquidity + (removedLiquidity / 2 ** VEGOID);
 
-1412:                     uint256 numerator = netLiquidity + (removedLiquidity / 2 ** VEGOID);
+1293:                     uint256 numerator = netLiquidity + (removedLiquidity / 2 ** VEGOID);
 
-1412:                     uint256 numerator = netLiquidity + (removedLiquidity / 2 ** VEGOID);
+1293:                     uint256 numerator = netLiquidity + (removedLiquidity / 2 ** VEGOID);
 
-1412:                     uint256 numerator = netLiquidity + (removedLiquidity / 2 ** VEGOID);
+1313:                     uint256 numerator = totalLiquidity ** 2 -
 
-1432:                     uint256 numerator = totalLiquidity ** 2 -
+1313:                     uint256 numerator = totalLiquidity ** 2 -
 
-1432:                     uint256 numerator = totalLiquidity ** 2 -
+1313:                     uint256 numerator = totalLiquidity ** 2 -
 
-1432:                     uint256 numerator = totalLiquidity ** 2 -
+1314:                         totalLiquidity *
 
-1433:                         totalLiquidity *
+1315:                         removedLiquidity +
 
-1434:                         removedLiquidity +
+1316:                         ((removedLiquidity ** 2) / 2 ** (VEGOID));
 
-1435:                         ((removedLiquidity ** 2) / 2 ** (VEGOID));
+1316:                         ((removedLiquidity ** 2) / 2 ** (VEGOID));
 
-1435:                         ((removedLiquidity ** 2) / 2 ** (VEGOID));
+1316:                         ((removedLiquidity ** 2) / 2 ** (VEGOID));
 
-1435:                         ((removedLiquidity ** 2) / 2 ** (VEGOID));
+1316:                         ((removedLiquidity ** 2) / 2 ** (VEGOID));
 
-1435:                         ((removedLiquidity ** 2) / 2 ** (VEGOID));
+1316:                         ((removedLiquidity ** 2) / 2 ** (VEGOID));
 
-1435:                         ((removedLiquidity ** 2) / 2 ** (VEGOID));
+1318:                         .mulDiv(premium0X64_base, numerator, totalLiquidity ** 2)
 
-1437:                         .mulDiv(premium0X64_base, numerator, totalLiquidity ** 2)
+1318:                         .mulDiv(premium0X64_base, numerator, totalLiquidity ** 2)
 
-1437:                         .mulDiv(premium0X64_base, numerator, totalLiquidity ** 2)
+1321:                         .mulDiv(premium1X64_base, numerator, totalLiquidity ** 2)
 
-1440:                         .mulDiv(premium1X64_base, numerator, totalLiquidity ** 2)
-
-1440:                         .mulDiv(premium1X64_base, numerator, totalLiquidity ** 2)
+1321:                         .mulDiv(premium1X64_base, numerator, totalLiquidity ** 2)
 
 ```
 
@@ -1117,195 +1115,183 @@ File: contracts/types/TokenId.sol
 
 6: import {Errors} from "@libraries/Errors.sol";
 
-99:             return uint256((self >> (64 + legIndex * 48)) % 2);
+95:             return uint256((self >> (64 + legIndex * 48)) % 2);
 
-99:             return uint256((self >> (64 + legIndex * 48)) % 2);
+95:             return uint256((self >> (64 + legIndex * 48)) % 2);
 
-109:             return uint256((self >> (64 + legIndex * 48 + 1)) % 128);
+105:             return uint256((self >> (64 + legIndex * 48 + 1)) % 128);
 
-109:             return uint256((self >> (64 + legIndex * 48 + 1)) % 128);
+105:             return uint256((self >> (64 + legIndex * 48 + 1)) % 128);
 
-109:             return uint256((self >> (64 + legIndex * 48 + 1)) % 128);
+105:             return uint256((self >> (64 + legIndex * 48 + 1)) % 128);
 
-119:             return uint256((self >> (64 + legIndex * 48 + 8)) % 2);
+115:             return uint256((self >> (64 + legIndex * 48 + 8)) % 2);
 
-119:             return uint256((self >> (64 + legIndex * 48 + 8)) % 2);
+115:             return uint256((self >> (64 + legIndex * 48 + 8)) % 2);
 
-119:             return uint256((self >> (64 + legIndex * 48 + 8)) % 2);
+115:             return uint256((self >> (64 + legIndex * 48 + 8)) % 2);
 
-129:             return uint256((self >> (64 + legIndex * 48 + 9)) % 2);
+125:             return uint256((self >> (64 + legIndex * 48 + 9)) % 2);
 
-129:             return uint256((self >> (64 + legIndex * 48 + 9)) % 2);
+125:             return uint256((self >> (64 + legIndex * 48 + 9)) % 2);
 
-129:             return uint256((self >> (64 + legIndex * 48 + 9)) % 2);
+125:             return uint256((self >> (64 + legIndex * 48 + 9)) % 2);
 
-145:             return uint256((self >> (64 + legIndex * 48 + 10)) % 4);
+141:             return uint256((self >> (64 + legIndex * 48 + 10)) % 4);
 
-145:             return uint256((self >> (64 + legIndex * 48 + 10)) % 4);
+141:             return uint256((self >> (64 + legIndex * 48 + 10)) % 4);
 
-145:             return uint256((self >> (64 + legIndex * 48 + 10)) % 4);
+141:             return uint256((self >> (64 + legIndex * 48 + 10)) % 4);
 
-155:             return int24(int256(self >> (64 + legIndex * 48 + 12)));
+151:             return int24(int256(self >> (64 + legIndex * 48 + 12)));
 
-155:             return int24(int256(self >> (64 + legIndex * 48 + 12)));
+151:             return int24(int256(self >> (64 + legIndex * 48 + 12)));
 
-155:             return int24(int256(self >> (64 + legIndex * 48 + 12)));
+151:             return int24(int256(self >> (64 + legIndex * 48 + 12)));
 
-166:             return int24(int256((self >> (64 + legIndex * 48 + 36)) % 4096));
+162:             return int24(int256((self >> (64 + legIndex * 48 + 36)) % 4096));
 
-166:             return int24(int256((self >> (64 + legIndex * 48 + 36)) % 4096));
+162:             return int24(int256((self >> (64 + legIndex * 48 + 36)) % 4096));
 
-166:             return int24(int256((self >> (64 + legIndex * 48 + 36)) % 4096));
+162:             return int24(int256((self >> (64 + legIndex * 48 + 36)) % 4096));
 
-167:         } // "% 4096" = take last (2 ** 12 = 4096) 12 bits
+163:         } // "% 4096" = take last (2 ** 12 = 4096) 12 bits
 
-167:         } // "% 4096" = take last (2 ** 12 = 4096) 12 bits
+163:         } // "% 4096" = take last (2 ** 12 = 4096) 12 bits
 
-167:         } // "% 4096" = take last (2 ** 12 = 4096) 12 bits
+163:         } // "% 4096" = take last (2 ** 12 = 4096) 12 bits
 
-167:         } // "% 4096" = take last (2 ** 12 = 4096) 12 bits
+163:         } // "% 4096" = take last (2 ** 12 = 4096) 12 bits
 
-179:             return self + uint256(_poolId);
+175:             return self + uint256(_poolId);
 
-199:             return self + (uint256(_asset % 2) << (64 + legIndex * 48));
+195:             return self + (uint256(_asset % 2) << (64 + legIndex * 48));
 
-199:             return self + (uint256(_asset % 2) << (64 + legIndex * 48));
+195:             return self + (uint256(_asset % 2) << (64 + legIndex * 48));
 
-199:             return self + (uint256(_asset % 2) << (64 + legIndex * 48));
+195:             return self + (uint256(_asset % 2) << (64 + legIndex * 48));
 
-214:             return self + (uint256(_optionRatio % 128) << (64 + legIndex * 48 + 1));
+210:             return self + (uint256(_optionRatio % 128) << (64 + legIndex * 48 + 1));
 
-214:             return self + (uint256(_optionRatio % 128) << (64 + legIndex * 48 + 1));
+210:             return self + (uint256(_optionRatio % 128) << (64 + legIndex * 48 + 1));
 
-214:             return self + (uint256(_optionRatio % 128) << (64 + legIndex * 48 + 1));
+210:             return self + (uint256(_optionRatio % 128) << (64 + legIndex * 48 + 1));
 
-214:             return self + (uint256(_optionRatio % 128) << (64 + legIndex * 48 + 1));
+210:             return self + (uint256(_optionRatio % 128) << (64 + legIndex * 48 + 1));
 
-230:             return self + ((_isLong % 2) << (64 + legIndex * 48 + 8));
+226:             return self + ((_isLong % 2) << (64 + legIndex * 48 + 8));
 
-230:             return self + ((_isLong % 2) << (64 + legIndex * 48 + 8));
+226:             return self + ((_isLong % 2) << (64 + legIndex * 48 + 8));
 
-230:             return self + ((_isLong % 2) << (64 + legIndex * 48 + 8));
+226:             return self + ((_isLong % 2) << (64 + legIndex * 48 + 8));
 
-230:             return self + ((_isLong % 2) << (64 + legIndex * 48 + 8));
+226:             return self + ((_isLong % 2) << (64 + legIndex * 48 + 8));
 
-244:             return self + (uint256(_tokenType % 2) << (64 + legIndex * 48 + 9));
+240:             return self + (uint256(_tokenType % 2) << (64 + legIndex * 48 + 9));
 
-244:             return self + (uint256(_tokenType % 2) << (64 + legIndex * 48 + 9));
+240:             return self + (uint256(_tokenType % 2) << (64 + legIndex * 48 + 9));
 
-244:             return self + (uint256(_tokenType % 2) << (64 + legIndex * 48 + 9));
+240:             return self + (uint256(_tokenType % 2) << (64 + legIndex * 48 + 9));
 
-244:             return self + (uint256(_tokenType % 2) << (64 + legIndex * 48 + 9));
+240:             return self + (uint256(_tokenType % 2) << (64 + legIndex * 48 + 9));
 
-258:             return self + (uint256(_riskPartner % 4) << (64 + legIndex * 48 + 10));
+254:             return self + (uint256(_riskPartner % 4) << (64 + legIndex * 48 + 10));
 
-258:             return self + (uint256(_riskPartner % 4) << (64 + legIndex * 48 + 10));
+254:             return self + (uint256(_riskPartner % 4) << (64 + legIndex * 48 + 10));
 
-258:             return self + (uint256(_riskPartner % 4) << (64 + legIndex * 48 + 10));
+254:             return self + (uint256(_riskPartner % 4) << (64 + legIndex * 48 + 10));
 
-258:             return self + (uint256(_riskPartner % 4) << (64 + legIndex * 48 + 10));
+254:             return self + (uint256(_riskPartner % 4) << (64 + legIndex * 48 + 10));
 
-272:             return self + uint256((int256(_strike) & BITMASK_INT24) << (64 + legIndex * 48 + 12));
+268:             return self + uint256((int256(_strike) & BITMASK_INT24) << (64 + legIndex * 48 + 12));
 
-272:             return self + uint256((int256(_strike) & BITMASK_INT24) << (64 + legIndex * 48 + 12));
+268:             return self + uint256((int256(_strike) & BITMASK_INT24) << (64 + legIndex * 48 + 12));
 
-272:             return self + uint256((int256(_strike) & BITMASK_INT24) << (64 + legIndex * 48 + 12));
+268:             return self + uint256((int256(_strike) & BITMASK_INT24) << (64 + legIndex * 48 + 12));
 
-272:             return self + uint256((int256(_strike) & BITMASK_INT24) << (64 + legIndex * 48 + 12));
+268:             return self + uint256((int256(_strike) & BITMASK_INT24) << (64 + legIndex * 48 + 12));
 
-287:             return self + (uint256(uint24(_width) % 4096) << (64 + legIndex * 48 + 36));
+283:             return self + (uint256(uint24(_width) % 4096) << (64 + legIndex * 48 + 36));
 
-287:             return self + (uint256(uint24(_width) % 4096) << (64 + legIndex * 48 + 36));
+283:             return self + (uint256(uint24(_width) % 4096) << (64 + legIndex * 48 + 36));
 
-287:             return self + (uint256(uint24(_width) % 4096) << (64 + legIndex * 48 + 36));
+283:             return self + (uint256(uint24(_width) % 4096) << (64 + legIndex * 48 + 36));
 
-287:             return self + (uint256(uint24(_width) % 4096) << (64 + legIndex * 48 + 36));
+283:             return self + (uint256(uint24(_width) % 4096) << (64 + legIndex * 48 + 36));
 
-341:             if (optionRatios < 2 ** 64) {
+337:             if (optionRatios < 2 ** 64) {
 
-341:             if (optionRatios < 2 ** 64) {
+337:             if (optionRatios < 2 ** 64) {
 
-343:             } else if (optionRatios < 2 ** 112) {
+339:             } else if (optionRatios < 2 ** 112) {
 
-343:             } else if (optionRatios < 2 ** 112) {
+339:             } else if (optionRatios < 2 ** 112) {
 
-345:             } else if (optionRatios < 2 ** 160) {
+341:             } else if (optionRatios < 2 ** 160) {
 
-345:             } else if (optionRatios < 2 ** 160) {
+341:             } else if (optionRatios < 2 ** 160) {
 
-347:             } else if (optionRatios < 2 ** 208) {
+343:             } else if (optionRatios < 2 ** 208) {
 
-347:             } else if (optionRatios < 2 ** 208) {
+343:             } else if (optionRatios < 2 ** 208) {
 
-357:             return self ^ ((LONG_MASK >> (48 * (4 - optionRatios))) & CLEAR_POOLID_MASK);
+353:             return self ^ ((LONG_MASK >> (48 * (4 - optionRatios))) & CLEAR_POOLID_MASK);
 
-357:             return self ^ ((LONG_MASK >> (48 * (4 - optionRatios))) & CLEAR_POOLID_MASK);
+353:             return self ^ ((LONG_MASK >> (48 * (4 - optionRatios))) & CLEAR_POOLID_MASK);
 
-367:             return self.isLong(0) + self.isLong(1) + self.isLong(2) + self.isLong(3);
+363:             return self.isLong(0) + self.isLong(1) + self.isLong(2) + self.isLong(3);
 
-367:             return self.isLong(0) + self.isLong(1) + self.isLong(2) + self.isLong(3);
+363:             return self.isLong(0) + self.isLong(1) + self.isLong(2) + self.isLong(3);
 
-367:             return self.isLong(0) + self.isLong(1) + self.isLong(2) + self.isLong(3);
+363:             return self.isLong(0) + self.isLong(1) + self.isLong(2) + self.isLong(3);
 
-389:             int24 minTick = (Constants.MIN_V3POOL_TICK / tickSpacing) * tickSpacing;
+385:             int24 minTick = (Constants.MIN_V3POOL_TICK / tickSpacing) * tickSpacing;
 
-389:             int24 minTick = (Constants.MIN_V3POOL_TICK / tickSpacing) * tickSpacing;
+385:             int24 minTick = (Constants.MIN_V3POOL_TICK / tickSpacing) * tickSpacing;
 
-390:             int24 maxTick = (Constants.MAX_V3POOL_TICK / tickSpacing) * tickSpacing;
+386:             int24 maxTick = (Constants.MAX_V3POOL_TICK / tickSpacing) * tickSpacing;
 
-390:             int24 maxTick = (Constants.MAX_V3POOL_TICK / tickSpacing) * tickSpacing;
+386:             int24 maxTick = (Constants.MAX_V3POOL_TICK / tickSpacing) * tickSpacing;
 
-393:             int24 oneSidedRange = (selfWidth * tickSpacing) / 2;
+389:             int24 oneSidedRange = (selfWidth * tickSpacing) / 2;
 
-393:             int24 oneSidedRange = (selfWidth * tickSpacing) / 2;
+389:             int24 oneSidedRange = (selfWidth * tickSpacing) / 2;
 
-395:             (legLowerTick, legUpperTick) = (selfStrike - oneSidedRange, selfStrike + oneSidedRange);
+391:             (legLowerTick, legUpperTick) = (selfStrike - oneSidedRange, selfStrike + oneSidedRange);
 
-395:             (legLowerTick, legUpperTick) = (selfStrike - oneSidedRange, selfStrike + oneSidedRange);
+391:             (legLowerTick, legUpperTick) = (selfStrike - oneSidedRange, selfStrike + oneSidedRange);
 
-421:         if (optionRatios < 2 ** 64) {
+417:         if (optionRatios < 2 ** 64) {
 
-421:         if (optionRatios < 2 ** 64) {
+417:         if (optionRatios < 2 ** 64) {
 
-423:         } else if (optionRatios < 2 ** 112) {
+419:         } else if (optionRatios < 2 ** 112) {
 
-423:         } else if (optionRatios < 2 ** 112) {
+419:         } else if (optionRatios < 2 ** 112) {
 
-425:         } else if (optionRatios < 2 ** 160) {
+421:         } else if (optionRatios < 2 ** 160) {
 
-425:         } else if (optionRatios < 2 ** 160) {
+421:         } else if (optionRatios < 2 ** 160) {
 
-427:         } else if (optionRatios < 2 ** 208) {
+423:         } else if (optionRatios < 2 ** 208) {
 
-427:         } else if (optionRatios < 2 ** 208) {
+423:         } else if (optionRatios < 2 ** 208) {
 
-446:             for (uint256 i = 0; i < 4; ++i) {
+468:             for (uint256 i = 0; i < 4; ++i) {
 
-446:             for (uint256 i = 0; i < 4; ++i) {
+468:             for (uint256 i = 0; i < 4; ++i) {
 
-451:                     if ((self >> (64 + 48 * i)) != 0) revert Errors.InvalidTokenIdParameter(1);
+473:                     if ((self >> (64 + 48 * i)) != 0) revert Errors.InvalidTokenIdParameter(1);
 
-451:                     if ((self >> (64 + 48 * i)) != 0) revert Errors.InvalidTokenIdParameter(1);
+473:                     if ((self >> (64 + 48 * i)) != 0) revert Errors.InvalidTokenIdParameter(1);
 
-453:                     break; // we are done iterating over potential legs
+475:                     break; // we are done iterating over potential legs
 
-453:                     break; // we are done iterating over potential legs
+475:                     break; // we are done iterating over potential legs
 
-498:             } // end for loop over legs
+520:             } // end for loop over legs
 
-498:             } // end for loop over legs
-
-554:                 if ((((XORtokenId) >> (64 + 48 * i)) & (0xFFF)) != 0) revert Errors.NotATokenRoll();
-
-554:                 if ((((XORtokenId) >> (64 + 48 * i)) & (0xFFF)) != 0) revert Errors.NotATokenRoll();
-
-560:                     ++j;
-
-560:                     ++j;
-
-564:                 ++i;
-
-564:                 ++i;
+520:             } // end for loop over legs
 
 ```
 
@@ -1313,16 +1299,16 @@ File: contracts/types/TokenId.sol
 
 ### <a name="GAS-5"></a>[GAS-5] Don't initialize variables with default value
 
-*Instances (9)*:
+*Instances (7)*:
 
 ```solidity
 File: contracts/SemiFungiblePositionManager.sol
 
-666:         for (uint256 i = 0; i < ids.length; ) {
+550:         for (uint256 i = 0; i < ids.length; ) {
 
-699:         for (uint256 leg = 0; leg < numLegs; ) {
+583:         for (uint256 leg = 0; leg < numLegs; ) {
 
-979:         for (uint256 leg = 0; leg < numLegs; ) {
+860:         for (uint256 leg = 0; leg < numLegs; ) {
 
 ```
 
@@ -1351,11 +1337,7 @@ File: contracts/tokens/ERC1155Minimal.sol
 ```solidity
 File: contracts/types/TokenId.sol
 
-446:             for (uint256 i = 0; i < 4; ++i) {
-
-538:         uint256 j = 0;
-
-543:         for (uint256 i = 0; i < 4; ) {
+468:             for (uint256 i = 0; i < 4; ++i) {
 
 ```
 
@@ -1368,7 +1350,7 @@ File: contracts/types/TokenId.sol
 ```solidity
 File: contracts/SemiFungiblePositionManager.sol
 
-1435:                         ((removedLiquidity ** 2) / 2 ** (VEGOID));
+1316:                         ((removedLiquidity ** 2) / 2 ** (VEGOID));
 
 ```
 
@@ -1381,23 +1363,23 @@ File: contracts/SemiFungiblePositionManager.sol
 ```solidity
 File: contracts/SemiFungiblePositionManager.sol
 
-233:         For an arbitrary parameter 0 <= ν <= 1. This way, the gross_feesCollectedX128 will be given by: 
+220:         For an arbitrary parameter 0 <= ν <= 1. This way, the gross_feesCollectedX128 will be given by: 
 
-463:         if (amount0Owed > 0)
+417:         if (amount0Owed > 0)
 
-470:         if (amount1Owed > 0)
+424:         if (amount1Owed > 0)
 
-498:         address token = amount0Delta > 0
+452:         address token = amount0Delta > 0
 
-503:         uint256 amountToPay = amount0Delta > 0 ? uint256(amount0Delta) : uint256(amount1Delta);
+457:         uint256 amountToPay = amount0Delta > 0 ? uint256(amount0Delta) : uint256(amount1Delta);
 
-925:                 zeroForOne = net0 < 0;
+806:                 zeroForOne = net0 < 0;
 
-930:                 zeroForOne = itm0 < 0;
+811:                 zeroForOne = itm0 < 0;
 
-933:                 zeroForOne = itm1 > 0;
+814:                 zeroForOne = itm1 > 0;
 
-1169:         if (currentLiquidity.rightSlot() > 0) {
+1050:         if (currentLiquidity.rightSlot() > 0) {
 
 ```
 
@@ -1420,7 +1402,7 @@ File: contracts/libraries/Math.sol
 
 If the functions are required by an interface, the contract should inherit from that interface and use the `override` keyword
 
-*Instances (60)*:
+*Instances (57)*:
 
 ```solidity
 File: contracts/libraries/CallbackLib.sol
@@ -1556,43 +1538,37 @@ File: contracts/types/LiquidityChunk.sol
 ```solidity
 File: contracts/types/TokenId.sol
 
-84:     function univ3pool(uint256 self) internal pure returns (uint64) {
+80:     function univ3pool(uint256 self) internal pure returns (uint64) {
 
-97:     function asset(uint256 self, uint256 legIndex) internal pure returns (uint256) {
+93:     function asset(uint256 self, uint256 legIndex) internal pure returns (uint256) {
 
-107:     function optionRatio(uint256 self, uint256 legIndex) internal pure returns (uint256) {
+103:     function optionRatio(uint256 self, uint256 legIndex) internal pure returns (uint256) {
 
-117:     function isLong(uint256 self, uint256 legIndex) internal pure returns (uint256) {
+113:     function isLong(uint256 self, uint256 legIndex) internal pure returns (uint256) {
 
-127:     function tokenType(uint256 self, uint256 legIndex) internal pure returns (uint256) {
+123:     function tokenType(uint256 self, uint256 legIndex) internal pure returns (uint256) {
 
-143:     function riskPartner(uint256 self, uint256 legIndex) internal pure returns (uint256) {
+139:     function riskPartner(uint256 self, uint256 legIndex) internal pure returns (uint256) {
 
-153:     function strike(uint256 self, uint256 legIndex) internal pure returns (int24) {
+149:     function strike(uint256 self, uint256 legIndex) internal pure returns (int24) {
 
-164:     function width(uint256 self, uint256 legIndex) internal pure returns (int24) {
+160:     function width(uint256 self, uint256 legIndex) internal pure returns (int24) {
 
-177:     function addUniv3pool(uint256 self, uint64 _poolId) internal pure returns (uint256) {
+173:     function addUniv3pool(uint256 self, uint64 _poolId) internal pure returns (uint256) {
 
-302:     function addLeg(
+298:     function addLeg(
 
-331:     function flipToBurnToken(uint256 self) internal pure returns (uint256) {
+327:     function flipToBurnToken(uint256 self) internal pure returns (uint256) {
 
-365:     function countLongs(uint256 self) internal pure returns (uint256) {
+361:     function countLongs(uint256 self) internal pure returns (uint256) {
 
-378:     function asTicks(
+374:     function asTicks(
 
-414:     function countLegs(uint256 self) internal pure returns (uint256) {
+410:     function countLegs(uint256 self) internal pure returns (uint256) {
 
-441:     function validate(uint256 self) internal pure returns (uint64) {
+442:     function clearLeg(uint256 self, uint256 i) internal pure returns (uint256) {
 
-515:     function rolledTokenIsValid(
-
-529:     function constructRollTokenIdWith(
-
-582:     function clearLeg(uint256 self, uint256 i) internal pure returns (uint256) {
-
-602:     function rollTokenInfo(
+463:     function validate(uint256 self) internal pure returns (uint64) {
 
 ```
 
@@ -1602,35 +1578,35 @@ File: contracts/types/TokenId.sol
 
 | |Issue|Instances|
 |-|:-|:-:|
-| [NC-1](#NC-1) |  `require()` / `revert()` statements should have descriptive reason strings | 36 |
+| [NC-1](#NC-1) |  `require()` / `revert()` statements should have descriptive reason strings | 35 |
 | [NC-2](#NC-2) | Event is missing `indexed` fields | 3 |
-| [NC-3](#NC-3) | Constants should be defined rather than using magic numbers | 25 |
+| [NC-3](#NC-3) | Constants should be defined rather than using magic numbers | 24 |
 | [NC-4](#NC-4) | Functions not used internally could be marked external | 6 |
 
 ### <a name="NC-1"></a>[NC-1]  `require()` / `revert()` statements should have descriptive reason strings
 
-*Instances (36)*:
+*Instances (35)*:
 
 ```solidity
 File: contracts/SemiFungiblePositionManager.sol
 
-388:     constructor(IUniswapV3Factory _factory) {
+342:     constructor(IUniswapV3Factory _factory) {
 
-413:         // @dev increase the poolId by a pseudo-random number
+367:         // @dev increase the poolId by a pseudo-random number
 
-754:               AMM INTERACTION AND POSITION UPDATE HELPERS
+638:               AMM INTERACTION AND POSITION UPDATE HELPERS
 
-758:     /// @notice This helper function checks:
+642:     /// @notice This helper function checks:
 
-824:         // if the in-the-money amount is not zero (i.e. positions were minted ITM) and the user did provide tick limits LOW > HIGH, then swap necessary amounts
+702:             );
 
-835:     }
+713:         if ((newTick >= tickLimitHigh) || (newTick <= tickLimitLow)) revert Errors.PriceBoundFail();
 
-858:     ///   It that position is burnt, then we remove a mix of the two tokens and swap one of them so that the user receives only one.
+738:     ///   to be correctly in the money at that strike.
 
-1061:     ) internal returns (int256 _moved, int256 _itmAmounts, int256 _totalCollected) {
+942:     ) internal returns (int256 _moved, int256 _itmAmounts, int256 _totalCollected) {
 
-1137:                 │  │       │                         │      │
+1016:                 ▲     ┌▼┐ liquidityChunk                 │
 
 ```
 
@@ -1701,25 +1677,23 @@ File: contracts/types/LeftRight.sol
 ```solidity
 File: contracts/types/TokenId.sol
 
-405:             ) revert Errors.TicksNotInitializable();
+401:             ) revert Errors.TicksNotInitializable();
 
-442:         if (self.optionRatio(0) == 0) revert Errors.InvalidTokenIdParameter(1);
+464:         if (self.optionRatio(0) == 0) revert Errors.InvalidTokenIdParameter(1);
 
-451:                     if ((self >> (64 + 48 * i)) != 0) revert Errors.InvalidTokenIdParameter(1);
+473:                     if ((self >> (64 + 48 * i)) != 0) revert Errors.InvalidTokenIdParameter(1);
 
-458:                 if ((self.width(i) == 0)) revert Errors.InvalidTokenIdParameter(5);
+480:                 if ((self.width(i) == 0)) revert Errors.InvalidTokenIdParameter(5);
 
-463:                 ) revert Errors.InvalidTokenIdParameter(4);
+485:                 ) revert Errors.InvalidTokenIdParameter(4);
 
-472:                         revert Errors.InvalidTokenIdParameter(3);
+494:                         revert Errors.InvalidTokenIdParameter(3);
 
-478:                     ) revert Errors.InvalidTokenIdParameter(3);
+500:                     ) revert Errors.InvalidTokenIdParameter(3);
 
-491:                         revert Errors.InvalidTokenIdParameter(4);
+513:                         revert Errors.InvalidTokenIdParameter(4);
 
-496:                         revert Errors.InvalidTokenIdParameter(5);
-
-554:                 if ((((XORtokenId) >> (64 + 48 * i)) & (0xFFF)) != 0) revert Errors.NotATokenRoll();
+518:                         revert Errors.InvalidTokenIdParameter(5);
 
 ```
 
@@ -1736,7 +1710,7 @@ File: contracts/SemiFungiblePositionManager.sol
 
 97:     event TokenizedPositionMinted(
 
-108:     /// @param positionSize The number of contracts rolled, expressed in terms of the asset
+112:     using LiquidityChunk for uint256; // a leg within an option position `tokenId`
 
 ```
 
@@ -1753,7 +1727,7 @@ File: contracts/tokens/ERC1155Minimal.sol
 
 ### <a name="NC-3"></a>[NC-3] Constants should be defined rather than using magic numbers
 
-*Instances (25)*:
+*Instances (24)*:
 
 ```solidity
 File: contracts/libraries/Math.sol
@@ -1788,39 +1762,37 @@ File: contracts/libraries/SafeTransferLib.sol
 ```solidity
 File: contracts/types/TokenId.sol
 
-99:             return uint256((self >> (64 + legIndex * 48)) % 2);
+95:             return uint256((self >> (64 + legIndex * 48)) % 2);
 
-109:             return uint256((self >> (64 + legIndex * 48 + 1)) % 128);
+105:             return uint256((self >> (64 + legIndex * 48 + 1)) % 128);
 
-119:             return uint256((self >> (64 + legIndex * 48 + 8)) % 2);
+115:             return uint256((self >> (64 + legIndex * 48 + 8)) % 2);
 
-129:             return uint256((self >> (64 + legIndex * 48 + 9)) % 2);
+125:             return uint256((self >> (64 + legIndex * 48 + 9)) % 2);
 
-145:             return uint256((self >> (64 + legIndex * 48 + 10)) % 4);
+141:             return uint256((self >> (64 + legIndex * 48 + 10)) % 4);
 
-155:             return int24(int256(self >> (64 + legIndex * 48 + 12)));
+151:             return int24(int256(self >> (64 + legIndex * 48 + 12)));
 
-166:             return int24(int256((self >> (64 + legIndex * 48 + 36)) % 4096));
+162:             return int24(int256((self >> (64 + legIndex * 48 + 36)) % 4096));
 
-199:             return self + (uint256(_asset % 2) << (64 + legIndex * 48));
+195:             return self + (uint256(_asset % 2) << (64 + legIndex * 48));
 
-214:             return self + (uint256(_optionRatio % 128) << (64 + legIndex * 48 + 1));
+210:             return self + (uint256(_optionRatio % 128) << (64 + legIndex * 48 + 1));
 
-230:             return self + ((_isLong % 2) << (64 + legIndex * 48 + 8));
+226:             return self + ((_isLong % 2) << (64 + legIndex * 48 + 8));
 
-244:             return self + (uint256(_tokenType % 2) << (64 + legIndex * 48 + 9));
+240:             return self + (uint256(_tokenType % 2) << (64 + legIndex * 48 + 9));
 
-258:             return self + (uint256(_riskPartner % 4) << (64 + legIndex * 48 + 10));
+254:             return self + (uint256(_riskPartner % 4) << (64 + legIndex * 48 + 10));
 
-272:             return self + uint256((int256(_strike) & BITMASK_INT24) << (64 + legIndex * 48 + 12));
+268:             return self + uint256((int256(_strike) & BITMASK_INT24) << (64 + legIndex * 48 + 12));
 
-287:             return self + (uint256(uint24(_width) % 4096) << (64 + legIndex * 48 + 36));
+283:             return self + (uint256(uint24(_width) % 4096) << (64 + legIndex * 48 + 36));
 
-357:             return self ^ ((LONG_MASK >> (48 * (4 - optionRatios))) & CLEAR_POOLID_MASK);
+353:             return self ^ ((LONG_MASK >> (48 * (4 - optionRatios))) & CLEAR_POOLID_MASK);
 
-451:                     if ((self >> (64 + 48 * i)) != 0) revert Errors.InvalidTokenIdParameter(1);
-
-554:                 if ((((XORtokenId) >> (64 + 48 * i)) & (0xFFF)) != 0) revert Errors.NotATokenRoll();
+473:                     if ((self >> (64 + 48 * i)) != 0) revert Errors.InvalidTokenIdParameter(1);
 
 ```
 
@@ -1879,9 +1851,9 @@ If all arguments are strings and or bytes, `bytes.concat()` should be used inste
 ```solidity
 File: contracts/SemiFungiblePositionManager.sol
 
-1518:             keccak256(abi.encodePacked(univ3pool, owner, tokenType, tickLower, tickUpper))
+1353:             keccak256(abi.encodePacked(univ3pool, owner, tokenType, tickLower, tickUpper))
 
-1611:             keccak256(abi.encodePacked(univ3pool, owner, tokenType, tickLower, tickUpper))
+1446:             keccak256(abi.encodePacked(univ3pool, owner, tokenType, tickLower, tickUpper))
 
 ```
 

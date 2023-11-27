@@ -16,7 +16,7 @@
 
 ## Automated Findings / Publicly Known Issues
 
-The 4naly3er report can be found [here](https://gist.github.com/JustDravee/0c80bf61962549e5b9ebd8b56e783155).
+The 4naly3er report can be found [here](https://github.com/code-423n4/2023-11-panoptic/blob/main/4naly3er-report.md).
 
 Automated findings output for the audit can be found [here](https://github.com/code-423n4/2023-11-panoptic/blob/main/bot-report.md) within 24 hours of audit opening.
 

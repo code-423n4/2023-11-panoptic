@@ -1,7 +1,7 @@
 INFO:Detectors:
-SemiFungiblePositionManager.uniswapV3MintCallback(uint256,uint256,bytes) (contracts/SemiFungiblePositionManager.sol#453-477) uses arbitrary from in transferFrom: SafeTransferLib.safeTransferFrom(decoded.poolFeatures.token0,decoded.payer,msg.sender,amount0Owed) (contracts/SemiFungiblePositionManager.sol#464-469)
-SemiFungiblePositionManager.uniswapV3MintCallback(uint256,uint256,bytes) (contracts/SemiFungiblePositionManager.sol#453-477) uses arbitrary from in transferFrom: SafeTransferLib.safeTransferFrom(decoded.poolFeatures.token1,decoded.payer,msg.sender,amount1Owed) (contracts/SemiFungiblePositionManager.sol#471-476)
-SemiFungiblePositionManager.uniswapV3SwapCallback(int256,int256,bytes) (contracts/SemiFungiblePositionManager.sol#487-507) uses arbitrary from in transferFrom: SafeTransferLib.safeTransferFrom(token,decoded.payer,msg.sender,amountToPay) (contracts/SemiFungiblePositionManager.sol#506)
+SemiFungiblePositionManager.uniswapV3MintCallback(uint256,uint256,bytes) (contracts/SemiFungiblePositionManager.sol#407-431) uses arbitrary from in transferFrom: SafeTransferLib.safeTransferFrom(decoded.poolFeatures.token0,decoded.payer,msg.sender,amount0Owed) (contracts/SemiFungiblePositionManager.sol#418-423)
+SemiFungiblePositionManager.uniswapV3MintCallback(uint256,uint256,bytes) (contracts/SemiFungiblePositionManager.sol#407-431) uses arbitrary from in transferFrom: SafeTransferLib.safeTransferFrom(decoded.poolFeatures.token1,decoded.payer,msg.sender,amount1Owed) (contracts/SemiFungiblePositionManager.sol#425-430)
+SemiFungiblePositionManager.uniswapV3SwapCallback(int256,int256,bytes) (contracts/SemiFungiblePositionManager.sol#441-461) uses arbitrary from in transferFrom: SafeTransferLib.safeTransferFrom(token,decoded.payer,msg.sender,amountToPay) (contracts/SemiFungiblePositionManager.sol#460)
 Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#arbitrary-from-in-transferfrom
 INFO:Detectors:
 Multicall.multicall(bytes[]) (contracts/multicall/Multicall.sol#12-36) has delegatecall inside a loop in a payable function: (success,result) = address(this).delegatecall(data[i]) (contracts/multicall/Multicall.sol#15)
@@ -31,109 +31,63 @@ Math.mulDiv(uint256,uint256,uint256) (contracts/libraries/Math.sol#186-280) perf
 Math.mulDiv(uint256,uint256,uint256) (contracts/libraries/Math.sol#186-280) performs a multiplication on the result of a division:
 	- prod0 = prod0 / twos (contracts/libraries/Math.sol#245)
 	- result = prod0 * inv (contracts/libraries/Math.sol#277)
-TokenId.asTicks(uint256,uint256,int24) (contracts/types/TokenId.sol#378-407) performs a multiplication on the result of a division:
-	- minTick = (Constants.MIN_V3POOL_TICK / tickSpacing) * tickSpacing (contracts/types/TokenId.sol#389)
-TokenId.asTicks(uint256,uint256,int24) (contracts/types/TokenId.sol#378-407) performs a multiplication on the result of a division:
-	- maxTick = (Constants.MAX_V3POOL_TICK / tickSpacing) * tickSpacing (contracts/types/TokenId.sol#390)
+TokenId.asTicks(uint256,uint256,int24) (contracts/types/TokenId.sol#374-403) performs a multiplication on the result of a division:
+	- minTick = (Constants.MIN_V3POOL_TICK / tickSpacing) * tickSpacing (contracts/types/TokenId.sol#385)
+TokenId.asTicks(uint256,uint256,int24) (contracts/types/TokenId.sol#374-403) performs a multiplication on the result of a division:
+	- maxTick = (Constants.MAX_V3POOL_TICK / tickSpacing) * tickSpacing (contracts/types/TokenId.sol#386)
 Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply
 INFO:Detectors:
-Reentrancy in SemiFungiblePositionManager._createLegInAMM(IUniswapV3Pool,uint256,uint256,uint256,bool) (contracts/SemiFungiblePositionManager.sol#1055-1186):
+Reentrancy in SemiFungiblePositionManager._createLegInAMM(IUniswapV3Pool,uint256,uint256,uint256,bool) (contracts/SemiFungiblePositionManager.sol#936-1067):
 	External calls:
-	- _totalCollected = _collectAndWritePositionData(_liquidityChunk,_univ3pool,currentLiquidity,positionKey,_moved,isLong) (contracts/SemiFungiblePositionManager.sol#1170-1177)
-		- (receivedAmount0,receivedAmount1) = univ3pool.collect(msg.sender,liquidityChunk.tickLower(),liquidityChunk.tickUpper(),uint128(amountToCollect.rightSlot()),uint128(amountToCollect.leftSlot())) (contracts/SemiFungiblePositionManager.sol#1341-1347)
-	- _moved = _mintLiquidity(_liquidityChunk,_univ3pool) (contracts/SemiFungiblePositionManager.sol#1150-1152)
-		- (amount0,amount1) = univ3pool.mint(address(this),liquidityChunk.tickLower(),liquidityChunk.tickUpper(),liquidityChunk.liquidity(),mintdata) (contracts/SemiFungiblePositionManager.sol#1266-1272)
-	- _moved = _burnLiquidity(_liquidityChunk,_univ3pool) (contracts/SemiFungiblePositionManager.sol#1150-1152)
-		- (amount0,amount1) = univ3pool.burn(liquidityChunk.tickLower(),liquidityChunk.tickUpper(),liquidityChunk.liquidity()) (contracts/SemiFungiblePositionManager.sol#1294-1298)
+	- _totalCollected = _collectAndWritePositionData(_liquidityChunk,_univ3pool,currentLiquidity,positionKey,_moved,isLong) (contracts/SemiFungiblePositionManager.sol#1051-1058)
+		- (receivedAmount0,receivedAmount1) = univ3pool.collect(msg.sender,liquidityChunk.tickLower(),liquidityChunk.tickUpper(),uint128(amountToCollect.rightSlot()),uint128(amountToCollect.leftSlot())) (contracts/SemiFungiblePositionManager.sol#1222-1228)
+	- _moved = _mintLiquidity(_liquidityChunk,_univ3pool) (contracts/SemiFungiblePositionManager.sol#1031-1033)
+		- (amount0,amount1) = univ3pool.mint(address(this),liquidityChunk.tickLower(),liquidityChunk.tickUpper(),liquidityChunk.liquidity(),mintdata) (contracts/SemiFungiblePositionManager.sol#1147-1153)
+	- _moved = _burnLiquidity(_liquidityChunk,_univ3pool) (contracts/SemiFungiblePositionManager.sol#1031-1033)
+		- (amount0,amount1) = univ3pool.burn(liquidityChunk.tickLower(),liquidityChunk.tickUpper(),liquidityChunk.liquidity()) (contracts/SemiFungiblePositionManager.sol#1175-1179)
 	State variables written after the call(s):
-	- s_accountFeesBase[positionKey] = _getFeesBase(_univ3pool,updatedLiquidity,_liquidityChunk) (contracts/SemiFungiblePositionManager.sol#1181-1185)
-	SemiFungiblePositionManager.s_accountFeesBase (contracts/SemiFungiblePositionManager.sol#309) can be used in cross function reentrancies:
-	- SemiFungiblePositionManager._collectAndWritePositionData(uint256,IUniswapV3Pool,uint256,bytes32,int256,uint256) (contracts/SemiFungiblePositionManager.sol#1319-1367)
-	- SemiFungiblePositionManager._createLegInAMM(IUniswapV3Pool,uint256,uint256,uint256,bool) (contracts/SemiFungiblePositionManager.sol#1055-1186)
-	- SemiFungiblePositionManager.getAccountFeesBase(address,address,uint256,int24,int24) (contracts/SemiFungiblePositionManager.sol#1602-1615)
-	- SemiFungiblePositionManager.getAccountPremium(address,address,uint256,int24,int24,int24,uint256) (contracts/SemiFungiblePositionManager.sol#1536-1590)
-	- SemiFungiblePositionManager.registerTokenTransfer(address,address,uint256,uint256) (contracts/SemiFungiblePositionManager.sol#694-751)
-Reentrancy in SemiFungiblePositionManager._exerciseRolls(uint256,uint256,uint128,int24,int24) (contracts/SemiFungiblePositionManager.sol#1462-1494):
-	External calls:
-	- (totalCollectedBurn,totalSwappedBurn,None) = _validateAndForwardToAMM(burnTokenId,positionSize,tickLimitLow,tickLimitHigh,BURN) (contracts/SemiFungiblePositionManager.sol#1479-1485)
-		- (amount0,amount1) = univ3pool.burn(liquidityChunk.tickLower(),liquidityChunk.tickUpper(),liquidityChunk.liquidity()) (contracts/SemiFungiblePositionManager.sol#1294-1298)
-		- (amount0,amount1) = univ3pool.mint(address(this),liquidityChunk.tickLower(),liquidityChunk.tickUpper(),liquidityChunk.liquidity(),mintdata) (contracts/SemiFungiblePositionManager.sol#1266-1272)
-		- (receivedAmount0,receivedAmount1) = univ3pool.collect(msg.sender,liquidityChunk.tickLower(),liquidityChunk.tickUpper(),uint128(amountToCollect.rightSlot()),uint128(amountToCollect.leftSlot())) (contracts/SemiFungiblePositionManager.sol#1341-1347)
-		- (swap0,swap1) = _univ3pool.swap(msg.sender,zeroForOne,swapAmount,Constants.MIN_V3POOL_SQRT_RATIO + 1,data) (contracts/SemiFungiblePositionManager.sol#943-951)
-		- (swap0,swap1) = _univ3pool.swap(msg.sender,zeroForOne,swapAmount,Constants.MAX_V3POOL_SQRT_RATIO - 1,data) (contracts/SemiFungiblePositionManager.sol#943-951)
-	- (totalCollectedMint,totalSwappedMint,newTick) = _validateAndForwardToAMM(mintTokenId,positionSize,tickLimitLow,tickLimitHigh,MINT) (contracts/SemiFungiblePositionManager.sol#1487-1493)
-		- (amount0,amount1) = univ3pool.burn(liquidityChunk.tickLower(),liquidityChunk.tickUpper(),liquidityChunk.liquidity()) (contracts/SemiFungiblePositionManager.sol#1294-1298)
-		- (amount0,amount1) = univ3pool.mint(address(this),liquidityChunk.tickLower(),liquidityChunk.tickUpper(),liquidityChunk.liquidity(),mintdata) (contracts/SemiFungiblePositionManager.sol#1266-1272)
-		- (receivedAmount0,receivedAmount1) = univ3pool.collect(msg.sender,liquidityChunk.tickLower(),liquidityChunk.tickUpper(),uint128(amountToCollect.rightSlot()),uint128(amountToCollect.leftSlot())) (contracts/SemiFungiblePositionManager.sol#1341-1347)
-		- (swap0,swap1) = _univ3pool.swap(msg.sender,zeroForOne,swapAmount,Constants.MIN_V3POOL_SQRT_RATIO + 1,data) (contracts/SemiFungiblePositionManager.sol#943-951)
-		- (swap0,swap1) = _univ3pool.swap(msg.sender,zeroForOne,swapAmount,Constants.MAX_V3POOL_SQRT_RATIO - 1,data) (contracts/SemiFungiblePositionManager.sol#943-951)
-	State variables written after the call(s):
-	- (totalCollectedMint,totalSwappedMint,newTick) = _validateAndForwardToAMM(mintTokenId,positionSize,tickLimitLow,tickLimitHigh,MINT) (contracts/SemiFungiblePositionManager.sol#1487-1493)
-		- s_accountFeesBase[positionKey] = _getFeesBase(_univ3pool,updatedLiquidity,_liquidityChunk) (contracts/SemiFungiblePositionManager.sol#1181-1185)
-	SemiFungiblePositionManager.s_accountFeesBase (contracts/SemiFungiblePositionManager.sol#309) can be used in cross function reentrancies:
-	- SemiFungiblePositionManager._collectAndWritePositionData(uint256,IUniswapV3Pool,uint256,bytes32,int256,uint256) (contracts/SemiFungiblePositionManager.sol#1319-1367)
-	- SemiFungiblePositionManager._createLegInAMM(IUniswapV3Pool,uint256,uint256,uint256,bool) (contracts/SemiFungiblePositionManager.sol#1055-1186)
-	- SemiFungiblePositionManager.getAccountFeesBase(address,address,uint256,int24,int24) (contracts/SemiFungiblePositionManager.sol#1602-1615)
-	- SemiFungiblePositionManager.getAccountPremium(address,address,uint256,int24,int24,int24,uint256) (contracts/SemiFungiblePositionManager.sol#1536-1590)
-	- SemiFungiblePositionManager.registerTokenTransfer(address,address,uint256,uint256) (contracts/SemiFungiblePositionManager.sol#694-751)
-	- (totalCollectedMint,totalSwappedMint,newTick) = _validateAndForwardToAMM(mintTokenId,positionSize,tickLimitLow,tickLimitHigh,MINT) (contracts/SemiFungiblePositionManager.sol#1487-1493)
-		- s_accountLiquidity[positionKey] = uint256(0).toLeftSlot(removedLiquidity).toRightSlot(updatedLiquidity) (contracts/SemiFungiblePositionManager.sol#1123-1125)
-	SemiFungiblePositionManager.s_accountLiquidity (contracts/SemiFungiblePositionManager.sol#192) can be used in cross function reentrancies:
-	- SemiFungiblePositionManager._createLegInAMM(IUniswapV3Pool,uint256,uint256,uint256,bool) (contracts/SemiFungiblePositionManager.sol#1055-1186)
-	- SemiFungiblePositionManager.getAccountLiquidity(address,address,uint256,int24,int24) (contracts/SemiFungiblePositionManager.sol#1508-1520)
-	- SemiFungiblePositionManager.getAccountPremium(address,address,uint256,int24,int24,int24,uint256) (contracts/SemiFungiblePositionManager.sol#1536-1590)
-	- SemiFungiblePositionManager.registerTokenTransfer(address,address,uint256,uint256) (contracts/SemiFungiblePositionManager.sol#694-751)
-	- (totalCollectedMint,totalSwappedMint,newTick) = _validateAndForwardToAMM(mintTokenId,positionSize,tickLimitLow,tickLimitHigh,MINT) (contracts/SemiFungiblePositionManager.sol#1487-1493)
-		- s_accountPremiumGross[positionKey] = s_accountPremiumGross[positionKey].add(deltaPremiumGross) (contracts/SemiFungiblePositionManager.sol#1203-1205)
-	SemiFungiblePositionManager.s_accountPremiumGross (contracts/SemiFungiblePositionManager.sol#303) can be used in cross function reentrancies:
-	- SemiFungiblePositionManager._updateStoredPremia(bytes32,uint256,int256) (contracts/SemiFungiblePositionManager.sol#1192-1206)
-	- SemiFungiblePositionManager.getAccountPremium(address,address,uint256,int24,int24,int24,uint256) (contracts/SemiFungiblePositionManager.sol#1536-1590)
-	- (totalCollectedMint,totalSwappedMint,newTick) = _validateAndForwardToAMM(mintTokenId,positionSize,tickLimitLow,tickLimitHigh,MINT) (contracts/SemiFungiblePositionManager.sol#1487-1493)
-		- s_accountPremiumOwed[positionKey] = s_accountPremiumOwed[positionKey].add(deltaPremiumOwed) (contracts/SemiFungiblePositionManager.sol#1202)
-	SemiFungiblePositionManager.s_accountPremiumOwed (contracts/SemiFungiblePositionManager.sol#301) can be used in cross function reentrancies:
-	- SemiFungiblePositionManager._updateStoredPremia(bytes32,uint256,int256) (contracts/SemiFungiblePositionManager.sol#1192-1206)
-	- SemiFungiblePositionManager.getAccountPremium(address,address,uint256,int24,int24,int24,uint256) (contracts/SemiFungiblePositionManager.sol#1536-1590)
+	- s_accountFeesBase[positionKey] = _getFeesBase(_univ3pool,updatedLiquidity,_liquidityChunk) (contracts/SemiFungiblePositionManager.sol#1062-1066)
+	SemiFungiblePositionManager.s_accountFeesBase (contracts/SemiFungiblePositionManager.sol#296) can be used in cross function reentrancies:
+	- SemiFungiblePositionManager._collectAndWritePositionData(uint256,IUniswapV3Pool,uint256,bytes32,int256,uint256) (contracts/SemiFungiblePositionManager.sol#1200-1248)
+	- SemiFungiblePositionManager._createLegInAMM(IUniswapV3Pool,uint256,uint256,uint256,bool) (contracts/SemiFungiblePositionManager.sol#936-1067)
+	- SemiFungiblePositionManager.getAccountFeesBase(address,address,uint256,int24,int24) (contracts/SemiFungiblePositionManager.sol#1437-1450)
+	- SemiFungiblePositionManager.getAccountPremium(address,address,uint256,int24,int24,int24,uint256) (contracts/SemiFungiblePositionManager.sol#1371-1425)
+	- SemiFungiblePositionManager.registerTokenTransfer(address,address,uint256,uint256) (contracts/SemiFungiblePositionManager.sol#578-635)
 Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1
 INFO:Detectors:
-SemiFungiblePositionManager._createLegInAMM(IUniswapV3Pool,uint256,uint256,uint256,bool).updatedLiquidity (contracts/SemiFungiblePositionManager.sol#1076) is a local variable never initialized
-SemiFungiblePositionManager._validateAndForwardToAMM(uint256,uint128,int24,int24,bool).swapAtMint (contracts/SemiFungiblePositionManager.sol#804) is a local variable never initialized
+SemiFungiblePositionManager._validateAndForwardToAMM(uint256,uint128,int24,int24,bool).swapAtMint (contracts/SemiFungiblePositionManager.sol#685) is a local variable never initialized
+SemiFungiblePositionManager._createLegInAMM(IUniswapV3Pool,uint256,uint256,uint256,bool).updatedLiquidity (contracts/SemiFungiblePositionManager.sol#957) is a local variable never initialized
 Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables
 INFO:Detectors:
-TokenId.validate(uint256).isLong (contracts/types/TokenId.sol#481) shadows:
-	- TokenId.isLong(uint256,uint256) (contracts/types/TokenId.sol#117-121) (function)
-TokenId.validate(uint256).tokenType (contracts/types/TokenId.sol#485) shadows:
-	- TokenId.tokenType(uint256,uint256) (contracts/types/TokenId.sol#127-131) (function)
+TokenId.validate(uint256).isLong (contracts/types/TokenId.sol#503) shadows:
+	- TokenId.isLong(uint256,uint256) (contracts/types/TokenId.sol#113-117) (function)
+TokenId.validate(uint256).tokenType (contracts/types/TokenId.sol#507) shadows:
+	- TokenId.tokenType(uint256,uint256) (contracts/types/TokenId.sol#123-127) (function)
 Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing
 INFO:Detectors:
 Multicall.multicall(bytes[]) (contracts/multicall/Multicall.sol#12-36) has external calls inside a loop: (success,result) = address(this).delegatecall(data[i]) (contracts/multicall/Multicall.sol#15)
 Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop
 INFO:Detectors:
-Reentrancy in SemiFungiblePositionManager._collectAndWritePositionData(uint256,IUniswapV3Pool,uint256,bytes32,int256,uint256) (contracts/SemiFungiblePositionManager.sol#1319-1367):
+Reentrancy in SemiFungiblePositionManager._collectAndWritePositionData(uint256,IUniswapV3Pool,uint256,bytes32,int256,uint256) (contracts/SemiFungiblePositionManager.sol#1200-1248):
 	External calls:
-	- (receivedAmount0,receivedAmount1) = univ3pool.collect(msg.sender,liquidityChunk.tickLower(),liquidityChunk.tickUpper(),uint128(amountToCollect.rightSlot()),uint128(amountToCollect.leftSlot())) (contracts/SemiFungiblePositionManager.sol#1341-1347)
+	- (receivedAmount0,receivedAmount1) = univ3pool.collect(msg.sender,liquidityChunk.tickLower(),liquidityChunk.tickUpper(),uint128(amountToCollect.rightSlot()),uint128(amountToCollect.leftSlot())) (contracts/SemiFungiblePositionManager.sol#1222-1228)
 	State variables written after the call(s):
-	- _updateStoredPremia(positionKey,currentLiquidity,collectedOut) (contracts/SemiFungiblePositionManager.sol#1365)
-		- s_accountPremiumGross[positionKey] = s_accountPremiumGross[positionKey].add(deltaPremiumGross) (contracts/SemiFungiblePositionManager.sol#1203-1205)
-	- _updateStoredPremia(positionKey,currentLiquidity,collectedOut) (contracts/SemiFungiblePositionManager.sol#1365)
-		- s_accountPremiumOwed[positionKey] = s_accountPremiumOwed[positionKey].add(deltaPremiumOwed) (contracts/SemiFungiblePositionManager.sol#1202)
+	- _updateStoredPremia(positionKey,currentLiquidity,collectedOut) (contracts/SemiFungiblePositionManager.sol#1246)
+		- s_accountPremiumGross[positionKey] = s_accountPremiumGross[positionKey].add(deltaPremiumGross) (contracts/SemiFungiblePositionManager.sol#1084-1086)
+	- _updateStoredPremia(positionKey,currentLiquidity,collectedOut) (contracts/SemiFungiblePositionManager.sol#1246)
+		- s_accountPremiumOwed[positionKey] = s_accountPremiumOwed[positionKey].add(deltaPremiumOwed) (contracts/SemiFungiblePositionManager.sol#1083)
 Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2
 INFO:Detectors:
-Reentrancy in SemiFungiblePositionManager.mintTokenizedPosition(uint256,uint128,int24,int24) (contracts/SemiFungiblePositionManager.sol#626-649):
+Reentrancy in SemiFungiblePositionManager.mintTokenizedPosition(uint256,uint128,int24,int24) (contracts/SemiFungiblePositionManager.sol#510-533):
 	External calls:
-	- _mint(msg.sender,tokenId,positionSize) (contracts/SemiFungiblePositionManager.sol#637)
+	- _mint(msg.sender,tokenId,positionSize) (contracts/SemiFungiblePositionManager.sol#521)
 		- ERC1155Holder(to).onERC1155Received(msg.sender,address(0),id,amount,) != ERC1155Holder.onERC1155Received.selector (contracts/tokens/ERC1155Minimal.sol#224-225)
 	Event emitted after the call(s):
-	- TokenizedPositionMinted(msg.sender,tokenId,positionSize) (contracts/SemiFungiblePositionManager.sol#639)
-Reentrancy in SemiFungiblePositionManager.rollTokenizedPositions(uint256,uint256,uint128,int24,int24) (contracts/SemiFungiblePositionManager.sol#560-616):
-	External calls:
-	- _mint(msg.sender,newTokenId,positionSize) (contracts/SemiFungiblePositionManager.sol#599)
-		- ERC1155Holder(to).onERC1155Received(msg.sender,address(0),id,amount,) != ERC1155Holder.onERC1155Received.selector (contracts/tokens/ERC1155Minimal.sol#224-225)
-	Event emitted after the call(s):
-	- TokenizedPositionRolled(msg.sender,oldTokenId,newTokenId,positionSize) (contracts/SemiFungiblePositionManager.sol#602)
+	- TokenizedPositionMinted(msg.sender,tokenId,positionSize) (contracts/SemiFungiblePositionManager.sol#523)
 Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3
 INFO:Detectors:
-SemiFungiblePositionManager.initializeAMMPool(address,address,uint24) (contracts/SemiFungiblePositionManager.sol#397-442) uses assembly
-	- INLINE ASM (contracts/SemiFungiblePositionManager.sol#439-441)
+SemiFungiblePositionManager.initializeAMMPool(address,address,uint24) (contracts/SemiFungiblePositionManager.sol#351-396) uses assembly
+	- INLINE ASM (contracts/SemiFungiblePositionManager.sol#393-395)
 Math.mulDiv(uint256,uint256,uint256) (contracts/libraries/Math.sol#186-280) uses assembly
 	- INLINE ASM (contracts/libraries/Math.sol#199-203)
 	- INLINE ASM (contracts/libraries/Math.sol#208-210)
@@ -173,7 +127,7 @@ Multicall.multicall(bytes[]) (contracts/multicall/Multicall.sol#12-36) uses asse
 Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage
 INFO:Detectors:
 Math.getSqrtRatioAtTick(int24) (contracts/libraries/Math.sol#38-91) has a high cyclomatic complexity (25).
-TokenId.validate(uint256) (contracts/types/TokenId.sol#441-502) has a high cyclomatic complexity (12).
+TokenId.validate(uint256) (contracts/types/TokenId.sol#463-524) has a high cyclomatic complexity (12).
 Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#cyclomatic-complexity
 INFO:Detectors:
 Pragma version^0.8.0 (contracts/libraries/CallbackLib.sol#2) allows old versions
@@ -193,51 +147,50 @@ Low level call in Multicall.multicall(bytes[]) (contracts/multicall/Multicall.so
 	- (success,result) = address(this).delegatecall(data[i]) (contracts/multicall/Multicall.sol#15)
 Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls
 INFO:Detectors:
-Variable SemiFungiblePositionManager.FACTORY (contracts/SemiFungiblePositionManager.sol#152) is not in mixedCase
-Variable SemiFungiblePositionManager.s_AddrToPoolIdData (contracts/SemiFungiblePositionManager.sol#160) is not in mixedCase
-Variable SemiFungiblePositionManager.s_poolContext (contracts/SemiFungiblePositionManager.sol#165) is not in mixedCase
-Variable SemiFungiblePositionManager.s_accountLiquidity (contracts/SemiFungiblePositionManager.sol#192) is not in mixedCase
-Variable SemiFungiblePositionManager.s_accountPremiumOwed (contracts/SemiFungiblePositionManager.sol#301) is not in mixedCase
-Variable SemiFungiblePositionManager.s_accountPremiumGross (contracts/SemiFungiblePositionManager.sol#303) is not in mixedCase
-Variable SemiFungiblePositionManager.s_accountFeesBase (contracts/SemiFungiblePositionManager.sol#309) is not in mixedCase
-Modifier SemiFungiblePositionManager.ReentrancyLock(uint64) (contracts/SemiFungiblePositionManager.sol#319-329) is not in mixedCase
-Modifier SemiFungiblePositionManager.ReentrancyLockRoll(uint64,uint64) (contracts/SemiFungiblePositionManager.sol#338-362) is not in mixedCase
+Variable SemiFungiblePositionManager.FACTORY (contracts/SemiFungiblePositionManager.sol#139) is not in mixedCase
+Variable SemiFungiblePositionManager.s_AddrToPoolIdData (contracts/SemiFungiblePositionManager.sol#147) is not in mixedCase
+Variable SemiFungiblePositionManager.s_poolContext (contracts/SemiFungiblePositionManager.sol#152) is not in mixedCase
+Variable SemiFungiblePositionManager.s_accountLiquidity (contracts/SemiFungiblePositionManager.sol#179) is not in mixedCase
+Variable SemiFungiblePositionManager.s_accountPremiumOwed (contracts/SemiFungiblePositionManager.sol#288) is not in mixedCase
+Variable SemiFungiblePositionManager.s_accountPremiumGross (contracts/SemiFungiblePositionManager.sol#290) is not in mixedCase
+Variable SemiFungiblePositionManager.s_accountFeesBase (contracts/SemiFungiblePositionManager.sol#296) is not in mixedCase
+Modifier SemiFungiblePositionManager.ReentrancyLock(uint64) (contracts/SemiFungiblePositionManager.sol#306-316) is not in mixedCase
 Parameter LiquidityChunk.createChunk(uint256,int24,int24,uint128)._tickLower (contracts/types/LiquidityChunk.sol#65) is not in mixedCase
 Parameter LiquidityChunk.createChunk(uint256,int24,int24,uint128)._tickUpper (contracts/types/LiquidityChunk.sol#66) is not in mixedCase
 Parameter LiquidityChunk.addTickLower(uint256,int24)._tickLower (contracts/types/LiquidityChunk.sol#88) is not in mixedCase
 Parameter LiquidityChunk.addTickUpper(uint256,int24)._tickUpper (contracts/types/LiquidityChunk.sol#98) is not in mixedCase
-Parameter TokenId.addUniv3pool(uint256,uint64)._poolId (contracts/types/TokenId.sol#177) is not in mixedCase
-Parameter TokenId.addAsset(uint256,uint256,uint256)._asset (contracts/types/TokenId.sol#195) is not in mixedCase
-Parameter TokenId.addOptionRatio(uint256,uint256,uint256)._optionRatio (contracts/types/TokenId.sol#210) is not in mixedCase
-Parameter TokenId.addIsLong(uint256,uint256,uint256)._isLong (contracts/types/TokenId.sol#226) is not in mixedCase
-Parameter TokenId.addTokenType(uint256,uint256,uint256)._tokenType (contracts/types/TokenId.sol#240) is not in mixedCase
-Parameter TokenId.addRiskPartner(uint256,uint256,uint256)._riskPartner (contracts/types/TokenId.sol#254) is not in mixedCase
-Parameter TokenId.addStrike(uint256,int24,uint256)._strike (contracts/types/TokenId.sol#268) is not in mixedCase
-Parameter TokenId.addWidth(uint256,int24,uint256)._width (contracts/types/TokenId.sol#282) is not in mixedCase
-Parameter TokenId.addLeg(uint256,uint256,uint256,uint256,uint256,uint256,uint256,int24,int24)._optionRatio (contracts/types/TokenId.sol#305) is not in mixedCase
-Parameter TokenId.addLeg(uint256,uint256,uint256,uint256,uint256,uint256,uint256,int24,int24)._asset (contracts/types/TokenId.sol#306) is not in mixedCase
-Parameter TokenId.addLeg(uint256,uint256,uint256,uint256,uint256,uint256,uint256,int24,int24)._isLong (contracts/types/TokenId.sol#307) is not in mixedCase
-Parameter TokenId.addLeg(uint256,uint256,uint256,uint256,uint256,uint256,uint256,int24,int24)._tokenType (contracts/types/TokenId.sol#308) is not in mixedCase
-Parameter TokenId.addLeg(uint256,uint256,uint256,uint256,uint256,uint256,uint256,int24,int24)._riskPartner (contracts/types/TokenId.sol#309) is not in mixedCase
-Parameter TokenId.addLeg(uint256,uint256,uint256,uint256,uint256,uint256,uint256,int24,int24)._strike (contracts/types/TokenId.sol#310) is not in mixedCase
-Parameter TokenId.addLeg(uint256,uint256,uint256,uint256,uint256,uint256,uint256,int24,int24)._width (contracts/types/TokenId.sol#311) is not in mixedCase
+Parameter TokenId.addUniv3pool(uint256,uint64)._poolId (contracts/types/TokenId.sol#173) is not in mixedCase
+Parameter TokenId.addAsset(uint256,uint256,uint256)._asset (contracts/types/TokenId.sol#191) is not in mixedCase
+Parameter TokenId.addOptionRatio(uint256,uint256,uint256)._optionRatio (contracts/types/TokenId.sol#206) is not in mixedCase
+Parameter TokenId.addIsLong(uint256,uint256,uint256)._isLong (contracts/types/TokenId.sol#222) is not in mixedCase
+Parameter TokenId.addTokenType(uint256,uint256,uint256)._tokenType (contracts/types/TokenId.sol#236) is not in mixedCase
+Parameter TokenId.addRiskPartner(uint256,uint256,uint256)._riskPartner (contracts/types/TokenId.sol#250) is not in mixedCase
+Parameter TokenId.addStrike(uint256,int24,uint256)._strike (contracts/types/TokenId.sol#264) is not in mixedCase
+Parameter TokenId.addWidth(uint256,int24,uint256)._width (contracts/types/TokenId.sol#278) is not in mixedCase
+Parameter TokenId.addLeg(uint256,uint256,uint256,uint256,uint256,uint256,uint256,int24,int24)._optionRatio (contracts/types/TokenId.sol#301) is not in mixedCase
+Parameter TokenId.addLeg(uint256,uint256,uint256,uint256,uint256,uint256,uint256,int24,int24)._asset (contracts/types/TokenId.sol#302) is not in mixedCase
+Parameter TokenId.addLeg(uint256,uint256,uint256,uint256,uint256,uint256,uint256,int24,int24)._isLong (contracts/types/TokenId.sol#303) is not in mixedCase
+Parameter TokenId.addLeg(uint256,uint256,uint256,uint256,uint256,uint256,uint256,int24,int24)._tokenType (contracts/types/TokenId.sol#304) is not in mixedCase
+Parameter TokenId.addLeg(uint256,uint256,uint256,uint256,uint256,uint256,uint256,int24,int24)._riskPartner (contracts/types/TokenId.sol#305) is not in mixedCase
+Parameter TokenId.addLeg(uint256,uint256,uint256,uint256,uint256,uint256,uint256,int24,int24)._strike (contracts/types/TokenId.sol#306) is not in mixedCase
+Parameter TokenId.addLeg(uint256,uint256,uint256,uint256,uint256,uint256,uint256,int24,int24)._width (contracts/types/TokenId.sol#307) is not in mixedCase
 Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions
 INFO:Detectors:
-Variable SemiFungiblePositionManager.uniswapV3SwapCallback(int256,int256,bytes).amount0Delta (contracts/SemiFungiblePositionManager.sol#488) is too similar to SemiFungiblePositionManager.uniswapV3SwapCallback(int256,int256,bytes).amount1Delta (contracts/SemiFungiblePositionManager.sol#489)
-Variable SemiFungiblePositionManager.uniswapV3MintCallback(uint256,uint256,bytes).amount0Owed (contracts/SemiFungiblePositionManager.sol#454) is too similar to SemiFungiblePositionManager.uniswapV3MintCallback(uint256,uint256,bytes).amount1Owed (contracts/SemiFungiblePositionManager.sol#455)
-Variable SemiFungiblePositionManager._getFeesBase(IUniswapV3Pool,uint128,uint256).feeGrowthInside0LastX128 (contracts/SemiFungiblePositionManager.sol#1221) is too similar to SemiFungiblePositionManager._getFeesBase(IUniswapV3Pool,uint128,uint256).feeGrowthInside1LastX128 (contracts/SemiFungiblePositionManager.sol#1221)
-Variable SemiFungiblePositionManager._getPremiaDeltas(uint256,int256).premium0X64_base (contracts/SemiFungiblePositionManager.sol#1391) is too similar to SemiFungiblePositionManager._getPremiaDeltas(uint256,int256).premium1X64_base (contracts/SemiFungiblePositionManager.sol#1392)
-Variable SemiFungiblePositionManager._getPremiaDeltas(uint256,int256).premium0X64_gross (contracts/SemiFungiblePositionManager.sol#1428) is too similar to SemiFungiblePositionManager._getPremiaDeltas(uint256,int256).premium1X64_gross (contracts/SemiFungiblePositionManager.sol#1429)
-Variable SemiFungiblePositionManager._getPremiaDeltas(uint256,int256).premium0X64_owed (contracts/SemiFungiblePositionManager.sol#1408) is too similar to SemiFungiblePositionManager._getPremiaDeltas(uint256,int256).premium1X64_owed (contracts/SemiFungiblePositionManager.sol#1409)
-Variable SemiFungiblePositionManager.getAccountPremium(address,address,uint256,int24,int24,int24,uint256).premiumToken0 (contracts/SemiFungiblePositionManager.sol#1544) is too similar to SemiFungiblePositionManager.getAccountPremium(address,address,uint256,int24,int24,int24,uint256).premiumToken1 (contracts/SemiFungiblePositionManager.sol#1544)
-Variable SemiFungiblePositionManager._collectAndWritePositionData(uint256,IUniswapV3Pool,uint256,bytes32,int256,uint256).receivedAmount0 (contracts/SemiFungiblePositionManager.sol#1341) is too similar to SemiFungiblePositionManager._collectAndWritePositionData(uint256,IUniswapV3Pool,uint256,bytes32,int256,uint256).receivedAmount1 (contracts/SemiFungiblePositionManager.sol#1341)
+Variable SemiFungiblePositionManager.uniswapV3MintCallback(uint256,uint256,bytes).amount0Owed (contracts/SemiFungiblePositionManager.sol#408) is too similar to SemiFungiblePositionManager.uniswapV3MintCallback(uint256,uint256,bytes).amount1Owed (contracts/SemiFungiblePositionManager.sol#409)
+Variable SemiFungiblePositionManager.uniswapV3SwapCallback(int256,int256,bytes).amount0Delta (contracts/SemiFungiblePositionManager.sol#442) is too similar to SemiFungiblePositionManager.uniswapV3SwapCallback(int256,int256,bytes).amount1Delta (contracts/SemiFungiblePositionManager.sol#443)
+Variable SemiFungiblePositionManager._getFeesBase(IUniswapV3Pool,uint128,uint256).feeGrowthInside0LastX128 (contracts/SemiFungiblePositionManager.sol#1102) is too similar to SemiFungiblePositionManager._getFeesBase(IUniswapV3Pool,uint128,uint256).feeGrowthInside1LastX128 (contracts/SemiFungiblePositionManager.sol#1102)
+Variable SemiFungiblePositionManager._getPremiaDeltas(uint256,int256).premium0X64_base (contracts/SemiFungiblePositionManager.sol#1272) is too similar to SemiFungiblePositionManager._getPremiaDeltas(uint256,int256).premium1X64_base (contracts/SemiFungiblePositionManager.sol#1273)
+Variable SemiFungiblePositionManager._getPremiaDeltas(uint256,int256).premium0X64_owed (contracts/SemiFungiblePositionManager.sol#1289) is too similar to SemiFungiblePositionManager._getPremiaDeltas(uint256,int256).premium1X64_owed (contracts/SemiFungiblePositionManager.sol#1290)
+Variable SemiFungiblePositionManager._getPremiaDeltas(uint256,int256).premium0X64_gross (contracts/SemiFungiblePositionManager.sol#1309) is too similar to SemiFungiblePositionManager._getPremiaDeltas(uint256,int256).premium1X64_gross (contracts/SemiFungiblePositionManager.sol#1310)
+Variable SemiFungiblePositionManager.getAccountPremium(address,address,uint256,int24,int24,int24,uint256).premiumToken0 (contracts/SemiFungiblePositionManager.sol#1379) is too similar to SemiFungiblePositionManager.getAccountPremium(address,address,uint256,int24,int24,int24,uint256).premiumToken1 (contracts/SemiFungiblePositionManager.sol#1379)
+Variable SemiFungiblePositionManager._collectAndWritePositionData(uint256,IUniswapV3Pool,uint256,bytes32,int256,uint256).receivedAmount0 (contracts/SemiFungiblePositionManager.sol#1222) is too similar to SemiFungiblePositionManager._collectAndWritePositionData(uint256,IUniswapV3Pool,uint256,bytes32,int256,uint256).receivedAmount1 (contracts/SemiFungiblePositionManager.sol#1222)
 Variable Constants.MAX_V3POOL_SQRT_RATIO (contracts/libraries/Constants.sol#20-21) is too similar to Constants.MIN_V3POOL_SQRT_RATIO (contracts/libraries/Constants.sol#17)
 Variable FeesCalc.calculateAMMSwapFeesLiquidityChunk(IUniswapV3Pool,int24,uint128,uint256).ammFeesPerLiqToken0X128 (contracts/libraries/FeesCalc.sol#63) is too similar to FeesCalc.calculateAMMSwapFeesLiquidityChunk(IUniswapV3Pool,int24,uint128,uint256).ammFeesPerLiqToken1X128 (contracts/libraries/FeesCalc.sol#64)
 Variable FeesCalc._getAMMSwapFeesPerLiquidityCollected(IUniswapV3Pool,int24,int24,int24).feeGrowthInside0X128 (contracts/libraries/FeesCalc.sol#94) is too similar to FeesCalc._getAMMSwapFeesPerLiquidityCollected(IUniswapV3Pool,int24,int24,int24).feeGrowthInside1X128 (contracts/libraries/FeesCalc.sol#94)
-Variable TokenId.addOptionRatio(uint256,uint256,uint256)._optionRatio (contracts/types/TokenId.sol#210) is too similar to TokenId.flipToBurnToken(uint256).optionRatios (contracts/types/TokenId.sol#336)
-Variable TokenId.addOptionRatio(uint256,uint256,uint256)._optionRatio (contracts/types/TokenId.sol#210) is too similar to TokenId.countLegs(uint256).optionRatios (contracts/types/TokenId.sol#416)
-Variable TokenId.addLeg(uint256,uint256,uint256,uint256,uint256,uint256,uint256,int24,int24)._optionRatio (contracts/types/TokenId.sol#305) is too similar to TokenId.countLegs(uint256).optionRatios (contracts/types/TokenId.sol#416)
-Variable TokenId.addLeg(uint256,uint256,uint256,uint256,uint256,uint256,uint256,int24,int24)._optionRatio (contracts/types/TokenId.sol#305) is too similar to TokenId.flipToBurnToken(uint256).optionRatios (contracts/types/TokenId.sol#336)
+Variable TokenId.addLeg(uint256,uint256,uint256,uint256,uint256,uint256,uint256,int24,int24)._optionRatio (contracts/types/TokenId.sol#301) is too similar to TokenId.countLegs(uint256).optionRatios (contracts/types/TokenId.sol#412)
+Variable TokenId.addOptionRatio(uint256,uint256,uint256)._optionRatio (contracts/types/TokenId.sol#206) is too similar to TokenId.flipToBurnToken(uint256).optionRatios (contracts/types/TokenId.sol#332)
+Variable TokenId.addLeg(uint256,uint256,uint256,uint256,uint256,uint256,uint256,int24,int24)._optionRatio (contracts/types/TokenId.sol#301) is too similar to TokenId.flipToBurnToken(uint256).optionRatios (contracts/types/TokenId.sol#332)
+Variable TokenId.addOptionRatio(uint256,uint256,uint256)._optionRatio (contracts/types/TokenId.sol#206) is too similar to TokenId.countLegs(uint256).optionRatios (contracts/types/TokenId.sol#412)
 Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#variable-names-too-similar
 INFO:Detectors:
 Constants.slitherConstructorConstantVariables() (contracts/libraries/Constants.sol#6-29) uses literals with too many digits:
@@ -256,24 +209,22 @@ Math.mulDiv192(uint256,uint256) (contracts/libraries/Math.sol#472-528) uses lite
 	- remainder = mulmod(uint256,uint256,uint256)(a,b,0x1000000000000000000000000000000000000000000000000) (contracts/libraries/Math.sol#507)
 SafeTransferLib.safeTransferFrom(address,address,address,uint256) (contracts/libraries/SafeTransferLib.sol#16-41) uses literals with too many digits:
 	- mstore(uint256,uint256)(p_safeTransferFrom_asm_0,0x23b872dd00000000000000000000000000000000000000000000000000000000) (contracts/libraries/SafeTransferLib.sol#24)
-TokenId.clearLeg(uint256,uint256) (contracts/types/TokenId.sol#582-593) uses literals with too many digits:
-	- self & 0xFFFFFFFFFFFF_FFFFFFFFFFFF_FFFFFFFFFFFF_000000000000_FFFFFFFFFFFFFFFF (contracts/types/TokenId.sol#584)
-TokenId.clearLeg(uint256,uint256) (contracts/types/TokenId.sol#582-593) uses literals with too many digits:
-	- self & 0xFFFFFFFFFFFF_FFFFFFFFFFFF_000000000000_FFFFFFFFFFFF_FFFFFFFFFFFFFFFF (contracts/types/TokenId.sol#586)
-TokenId.clearLeg(uint256,uint256) (contracts/types/TokenId.sol#582-593) uses literals with too many digits:
-	- self & 0xFFFFFFFFFFFF_000000000000_FFFFFFFFFFFF_FFFFFFFFFFFF_FFFFFFFFFFFFFFFF (contracts/types/TokenId.sol#588)
-TokenId.clearLeg(uint256,uint256) (contracts/types/TokenId.sol#582-593) uses literals with too many digits:
-	- self & 0x000000000000_FFFFFFFFFFFF_FFFFFFFFFFFF_FFFFFFFFFFFF_FFFFFFFFFFFFFFFF (contracts/types/TokenId.sol#590)
-TokenId.slitherConstructorConstantVariables() (contracts/types/TokenId.sol#56-624) uses literals with too many digits:
+TokenId.clearLeg(uint256,uint256) (contracts/types/TokenId.sol#442-453) uses literals with too many digits:
+	- self & 0xFFFFFFFFFFFF_FFFFFFFFFFFF_FFFFFFFFFFFF_000000000000_FFFFFFFFFFFFFFFF (contracts/types/TokenId.sol#444)
+TokenId.clearLeg(uint256,uint256) (contracts/types/TokenId.sol#442-453) uses literals with too many digits:
+	- self & 0xFFFFFFFFFFFF_FFFFFFFFFFFF_000000000000_FFFFFFFFFFFF_FFFFFFFFFFFFFFFF (contracts/types/TokenId.sol#446)
+TokenId.clearLeg(uint256,uint256) (contracts/types/TokenId.sol#442-453) uses literals with too many digits:
+	- self & 0xFFFFFFFFFFFF_000000000000_FFFFFFFFFFFF_FFFFFFFFFFFF_FFFFFFFFFFFFFFFF (contracts/types/TokenId.sol#448)
+TokenId.clearLeg(uint256,uint256) (contracts/types/TokenId.sol#442-453) uses literals with too many digits:
+	- self & 0x000000000000_FFFFFFFFFFFF_FFFFFFFFFFFF_FFFFFFFFFFFF_FFFFFFFFFFFFFFFF (contracts/types/TokenId.sol#450)
+TokenId.slitherConstructorConstantVariables() (contracts/types/TokenId.sol#56-525) uses literals with too many digits:
 	- LONG_MASK = 0x100_000000000100_000000000100_000000000100_0000000000000000 (contracts/types/TokenId.sol#60-61)
-TokenId.slitherConstructorConstantVariables() (contracts/types/TokenId.sol#56-624) uses literals with too many digits:
+TokenId.slitherConstructorConstantVariables() (contracts/types/TokenId.sol#56-525) uses literals with too many digits:
 	- CLEAR_POOLID_MASK = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF_0000000000000000 (contracts/types/TokenId.sol#63-64)
-TokenId.slitherConstructorConstantVariables() (contracts/types/TokenId.sol#56-624) uses literals with too many digits:
+TokenId.slitherConstructorConstantVariables() (contracts/types/TokenId.sol#56-525) uses literals with too many digits:
 	- OPTION_RATIO_MASK = 0x0000000000FE_0000000000FE_0000000000FE_0000000000FE_0000000000000000 (contracts/types/TokenId.sol#66-67)
-TokenId.slitherConstructorConstantVariables() (contracts/types/TokenId.sol#56-624) uses literals with too many digits:
-	- ROLL_MASK = 0xFFF_000000000FFF_000000000FFF_000000000FFF_FFFFFFFFFFFFFFFF (contracts/types/TokenId.sol#71-72)
 Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits
 INFO:Detectors:
-TokenId.RISK_PARTNER_MASK (contracts/types/TokenId.sol#75) is never used in TokenId (contracts/types/TokenId.sol#56-624)
+TokenId.RISK_PARTNER_MASK (contracts/types/TokenId.sol#71) is never used in TokenId (contracts/types/TokenId.sol#56-525)
 Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-state-variable
-INFO:Slither:. analyzed (103 contracts with 85 detectors), 106 result(s) found
+INFO:Slither:. analyzed (102 contracts with 85 detectors), 102 result(s) found
