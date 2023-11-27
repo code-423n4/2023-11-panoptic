@@ -28,6 +28,7 @@ Some tokens may not be transferable at all.
 of these functions will validate the inputs beforehand. 
 - Pools with a tick spacing of 1 are not currently supported. For the purposes of this audit, the only tick spacings that are supported are 10, 60, and 200 (corresponding to fee tiers of 5bps, 30bps, and 100bps respectively).
 - Very large quantities of tokens are not supported. It should be assumed that for any given pool, the cumulative amount of tokens that enter the system (associated with that pool, through adding liquidity, collection, etc.) will not exceed 2^127 - 1. Note that this is only a per-pool assumption, so if it is broken on one pool it should not affect the operation of any other pools, only the pool in question.
+- Any submissions involving a call of the function `rollTokenizedPositions` will not be accepted. This function will be removed after the completion of this audit.
 
 # Overview
 
