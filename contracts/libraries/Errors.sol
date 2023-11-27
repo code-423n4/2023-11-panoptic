@@ -26,9 +26,6 @@ library Errors {
     /// @notice None of the forced exercised legs are exerciseable (they are all in-the-money)
     error NoLegsExercisable();
 
-    /// @notice Not a valid option roll; some parameters differ that shouldn't (e.g. optionRatio, etc.)
-    error NotATokenRoll();
-
     /// @notice max token amounts for position exceed 128 bits.
     error PositionTooLarge();
 
