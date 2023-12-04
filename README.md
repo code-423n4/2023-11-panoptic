@@ -1,6 +1,6 @@
 # Panoptic audit details
-- Total Prize Pool: $60,500 USDC 
-  - HM awards: $41,250 USDC 
+- Total Prize Pool: $75,500 USDC 
+  - HM awards: $56,250 USDC 
   - Analysis awards: $2,500 USDC
   - QA awards: $1,250 USDC 
   - Bot Race awards: $3,750 USDC 
